@@ -5,8 +5,8 @@
 <section id="rooms">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Rooms Management</h2>
-        <a href="/roomsettings" class="btn btn-secondary" style="font-size: 1.5rem">
-            <i class="fas fa-cog"></i> <!-- Settings icon -->
+        <a href="/roomsettings" class="btn btn-secondary align-items-center" style="font-size: 1.5rem; margin-left: auto;justify-content: center">
+            <i class="fas fa-cog ml-2 align-items-center" ></i> <!-- Settings icon -->
         </a>
     </div>
     <div class="row">
