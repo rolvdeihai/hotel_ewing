@@ -124,7 +124,4 @@
         });
     </script>
 
-
-
-
 @endsection
