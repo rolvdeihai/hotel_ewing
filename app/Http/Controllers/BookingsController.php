@@ -1,0 +1,266 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Bookings;
+use App\Models\Rooms;
+use App\Models\XItems;
+use App\Models\Items;
+use App\Models\Saldo;
+use App\Models\Kas;
+use App\Models\Pricelist;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
+
+class BookingsController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function booking(Request $request)
+    {
+        $room = Rooms::where('room_number', $request->room_id)->first();
+        if (!$room) {
+            return back()->withErrors(['roomNumber' => 'Invalid room number.'])->withInput();
+        }
+
+        $bookings = Bookings::where('room_id', $room->id)
+                   ->where('status', 'checkIn')
+                   ->first(); // Use get() to retrieve the results
+
+        $xitems = XItems::where('booking_id', $bookings->id ?? null)->get();
+
+        return view('booking', [
+            "bookings" => $bookings,
+            "xitems" => $xitems,
+        ]);
+    }
+
+    public function editbooking(Request $request)
+    {
+        $booking = Bookings::find($request->booking_id);
+
+        // $bookings->
+
+        $xitems = XItems::where('booking_id', $booking->id ?? null)->get();
+
+        $items = Pricelist::all();
+
+        return view('editbooking', [
+            "booking" => $booking,
+            "xitems" => $xitems,
+            "items" => $items
+        ]);
+    }
+
+    public function updatebooking(Request $request)
+    {
+        $booking = Bookings::find($request->booking_id);
+
+        $booking->guestName = $request->guestName;
+
+        $room = Rooms::where('room_number', $request->room_number)->first();
+
+        if (!$room) {
+            return response()->json(['error' => 'Room not found'], 404);
+        }
+
+        $booking->room_id = $room->id;
+        $booking->email = $request->email;
+        $booking->phone_number = $request->phone_number;
+        $booking->check_in_date = $request->check_in_date;
+        $booking->check_out_date = $request->check_out_date;
+
+        $check_in = Carbon::parse($request->check_in_date);
+        $check_out = Carbon::parse($request->check_out_date);
+        $nights = $check_in->diffInDays($check_out);
+
+        $saldo = Saldo::find(1);
+
+        if (!$request->total_amount) {
+            $booking->total_amount = $saldo->room_rate * $nights;
+        }
+        else{
+            $booking->total_amount = $request->total_amount;
+        }
+
+        $booking->save();
+
+        $xitemIds = $request->input('xitem_id'); // Array of item IDs
+        $item_ids = $request->input('item_id'); // Array of quantities
+        $quantities = $request->input('quantity'); // Array of quantities
+
+        if ($request->filled('xitem_id')) {
+            foreach ($xitemIds as $index => $xitemId) {
+                // Cari XItem berdasarkan ID
+                $xitem = XItems::find($xitemId);
+                if ($xitem) {
+                    $xitem->pricelist_id = $item_ids[$index];
+                    $xitem->qty = $quantities[$index]; // Update quantity
+                    $xitem->save();
+                }
+            }
+        }
+
+        if ($request->booking_status == 'CheckIn'){
+            $bookings = Bookings::where('room_id', $room->id)
+                   ->where('status', 'checkIn')
+                   ->first(); // Use get() to retrieve the results
+
+            // Extract all booking IDs
+            // $bookingIds = $bookings->pluck('id')->toArray();
+
+            // // Fetch XItems that match any booking_id in the retrieved bookings
+            // $xitems = XItems::whereIn('booking_id', $bookingIds)->get();
+            $xitems = XItems::where('booking_id', $bookings->id ?? null)->get();
+
+            return view('booking', [
+                "bookings" => $bookings,
+                "xitems" => $xitems,
+            ]);
+        } else{
+            $bookings = Bookings::where('status', 'checkOut')->get(); // Retrieves multiple records
+
+            // Extract all booking IDs
+            $bookingIds = $bookings->pluck('id')->toArray();
+
+            // Fetch XItems that match any booking_id in the retrieved bookings
+            $xitems = XItems::whereIn('booking_id', $bookingIds)->get();
+
+            return view('transactions', [
+                "bookings" => $bookings,
+                "xitems" => $xitems,
+            ]);
+        }
+
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function add_xitem(Request $request)
+    {
+        // Pastikan booking_id ada
+        if ($request->has('booking_id')) {
+            $booking = Bookings::find($request->booking_id);
+            if (!$booking) {
+                return back()->withErrors(['error' => 'Booking not found']);
+            }
+
+            // Jika pricelist_id ada, update atau tambahkan item
+            if ($request->filled('pricelist_id')) {
+                $pricelist = Pricelist::find($request->pricelist_id);
+                if (!$pricelist) {
+                    return back()->withErrors(['error' => 'Pricelist not found']);
+                }
+
+                // Cek apakah item sudah ada berdasarkan pricelist_id & booking_id
+                $existingXItem = XItems::where('pricelist_id', $request->pricelist_id)
+                                    ->where('booking_id', $request->booking_id)
+                                    ->first();
+
+                if ($existingXItem) {
+                    // Jika sudah ada, tambahkan quantity
+                    $existingXItem->qty += $request->quantity;
+                    $existingXItem->save();
+                } else {
+                    // Jika belum ada, buat entri baru
+                    XItems::create([
+                        'booking_id' => $request->booking_id,
+                        'pricelist_id' => $request->pricelist_id,
+                        'qty' => $request->quantity,
+                    ]);
+                }
+
+                // Update total_amount di booking
+                $booking->total_amount += ($pricelist->price * $request->quantity);
+                $booking->save();
+            }
+        }
+
+        // Lanjutkan ke proses item jika item_id ada
+        if ($request->has('item_id')) {
+            $items = Items::find($request->item_id);
+            if ($items) {
+                $saldo = Saldo::find(1);
+                if (!$saldo) {
+                    return back()->withErrors(['error' => 'Saldo not found']);
+                }
+
+                $transactionAmount = $items->price * $request->quantity * -1;
+
+                // Update stok item
+                $items->stocks -= $request->quantity;
+                $items->save();
+
+                // Update saldo
+                $saldo->saldo += $transactionAmount;
+                $saldo->save();
+
+                // Simpan transaksi ke Kas
+                Kas::create([
+                    'qty' => -($request->quantity),
+                    'description' => $items->name,
+                    'transaction' => $transactionAmount,
+                    'saldo' => $saldo->saldo,
+                ]);
+            }
+        }
+
+        // Ambil booking jika booking_id ada
+        $bookings = Bookings::find($request->booking_id);
+        $xitems = XItems::where('booking_id', $bookings->id ?? null)->get();
+
+        return view('booking', [
+            "bookings" => $bookings,
+            "xitems" => $xitems,
+        ]);
+    }
+
+
+
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Bookings $bookings)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Bookings $bookings)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Bookings $bookings)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function deleteBooking(Request $request){
+        $booking = Bookings::find($request->booking_id);
+        $rooms = Rooms::find($booking->room_id);
+        $rooms->status = 'vacant';
+        $rooms->save();
+        $booking->delete();
+        return redirect()->intended('/rooms');
+    }
+}

@@ -1,0 +1,259 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Rooms;
+use App\Models\Bookings;
+use App\Models\Guests;
+use App\Models\Items;
+use App\Models\Kas;
+use App\Models\Transactions;
+use App\Models\Pricelist;
+use App\Models\Saldo;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+
+class RoomsController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        $rooms = Rooms::simplePaginate(8);
+
+        return view('rooms', [
+            "rooms" => $rooms,
+        ]);
+    }
+
+    public function roomsettings()
+    {
+        $saldo = Saldo::find(1);
+
+        return view('room-settings', [
+            "saldo" => $saldo,
+        ]);
+    }
+
+    public function update_room_settings(Request $request)
+    {
+        $saldo = Saldo::find(1);
+
+        $update_saldo = $request->validate([
+            'room_rate' => 'required|numeric|min:0', // Bisa menerima angka desimal
+            'tax' => 'required|numeric|min:0', // Jika tax harus bisa desimal, gunakan decimal:1,2
+        ]);
+
+        $saldo->room_rate = $update_saldo['room_rate'];
+        $saldo->tax = $update_saldo['tax'] / 100;
+
+        // Insert into database
+        $saldo->save();
+
+        return redirect()->intended('/rooms')->with('success', 'Item added successfully!');
+    }
+
+    public function viewCheckIn()
+    {
+        $rooms = Rooms::where('status', 'vacant')->get();
+
+        return view('checkinform', [
+            "rooms" => $rooms,
+        ]);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function CheckIn(Request $request)
+    {
+        $newCheckIn = $request->validate([
+            'guestName' => 'required|max:25|regex:/^[\w\s-]*$/',
+            'phone_number' => 'required|max:25|regex:/^[\d\s+-]*$/',
+            'email' => 'required|email', // Removed 'unique' constraint
+            'room_id' => 'required|numeric|exists:rooms,room_number', // Must be numeric & exist in rooms table
+            'check_in_date' => 'required|date',
+            'check_out_date' => 'required|date|after:check_in_date',
+            'payment_method' => 'required'
+        ]);
+
+        // Get the actual room ID
+        $room = Rooms::where('room_number', $request->room_id)->first();
+        if (!$room) {
+            return back()->withErrors(['roomNumber' => 'Invalid room number.'])->withInput();
+        }
+
+        $saldo = Saldo::find(1);
+
+        // Assign room ID instead of room number
+        $newCheckIn['room_id'] = $room->id;
+
+        $check_in = Carbon::parse($request->check_in_date);
+        $check_out = Carbon::parse($request->check_out_date);
+        $nights = $check_in->diffInDays($check_out);
+
+        $newCheckIn['total_amount'] = $saldo->room_rate * $nights;
+        $newCheckIn['status'] = 'checkIn';
+        Bookings::create($newCheckIn);
+
+        // Update auto-stock items
+        $items = Items::where('auto_stock', 'checkIn')->get();
+        $total = 0;
+
+        foreach ($items as $item) {
+            $item->stocks += $item->auto_stock_value;
+            $item->save();
+
+            // Store transaction history
+            $kasHistory = [
+                'qty' => $item->auto_stock_value,
+                'description' => $item->name,
+                'transaction' => $item->price * $item->auto_stock_value,
+            ];
+
+            $kasHistory['saldo'] = $saldo->saldo + $kasHistory['transaction'];
+
+            $total += $kasHistory['transaction'];
+
+            $saldo->saldo += $kasHistory['transaction'];
+            $saldo->save();
+
+            Kas::create($kasHistory);
+        }
+
+        $price_list = Pricelist::where('auto_stock', 'checkIn')->get();
+
+        foreach ($price_list as $price_list) {
+            $price_list->stocks += $price_list->auto_stock_value;
+            $price_list->save();
+        }
+
+        $room->status = 'occupied';
+        $room->save();
+
+        return redirect('/checkin')->with('success', 'Item added successfully!');
+    }
+
+    public function CheckOut(Request $request)
+    {
+        // Get the actual room ID
+        $room = Rooms::where('room_number', $request->room_id)->first();
+        if (!$room) {
+            return back()->withErrors(['roomNumber' => 'Invalid room number.'])->withInput();
+        }
+
+        $booking = Bookings::where('room_id', $room->id)
+                   ->where('status', 'checkIn')
+                   ->first(); // Use get() to retrieve the results
+
+        $booking->status = 'checkOut';
+        $booking->save();
+
+        // Update auto-stock items
+        $items = Items::where('auto_stock', 'checkOut')->get();
+        $total = 0;
+
+        $saldo = Saldo::find(1);
+
+        foreach ($items as $item) {
+            $item->stocks += $item->auto_stock_value;
+            $item->save();
+
+            // Store transaction history
+            $kasHistory = [
+                'qty' => $item->auto_stock_value,
+                'description' => $item->name,
+                'transaction' => $item->price * $item->auto_stock_value,
+            ];
+            $total += $kasHistory['transaction'];
+
+            $kasHistory['transaction'] = -abs($kasHistory['transaction']);
+
+            $kasHistory['saldo'] = $saldo->saldo + $kasHistory['transaction'];
+
+            $saldo->saldo += $kasHistory['transaction'];
+            $saldo->save();
+
+            Kas::create($kasHistory);
+        }
+
+        $price_list = Pricelist::where('auto_stock', 'checkOut')->get();
+
+        foreach ($price_list as $price_list) {
+            $price_list->stocks += $price_list->auto_stock_value;
+            $price_list->save();
+        }
+
+        $room->status = 'vacant';
+        $room->save();
+
+        return redirect('/rooms')->with('success', 'Check Out Success!');
+    }
+
+    // public function additionalitem()
+    // {
+    //     return view('additionalitem');
+    // }
+
+    public function additionalitem(Request $request)
+    {
+        $room = Rooms::where('room_number', $request->room_id)->first();
+        if (!$room) {
+            return back()->withErrors(['roomNumber' => 'Invalid room number.'])->withInput();
+        }
+
+        $items = Items::all();
+        $price_lists = Pricelist::all();
+
+        $bookings = Bookings::where('room_id', $room->id)
+                   ->where('status', 'checkIn')
+                   ->first(); // Use get() to retrieve the results
+
+        return view('additionalitem', [
+            "bookings" => $bookings,
+            "items" => $items,
+            "price_lists" => $price_lists,
+        ]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Rooms $rooms)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Rooms $rooms)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Rooms $rooms)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Rooms $rooms)
+    {
+        //
+    }
+}
