@@ -55,76 +55,91 @@ class BookingsController extends Controller
 
     public function updatebooking(Request $request)
     {
+        // **1. Validate Input Data**
+        $validatedData = $request->validate([
+            'guestName' => 'required|max:25|regex:/^[\w\s-]*$/',
+            'phone_number' => 'required|max:25|regex:/^[\d\s+-]*$/',
+            'email' => 'required|email',
+            // 'room_number' => 'required|numeric|exists:rooms,room_number',
+            'check_in_date' => 'required|date',
+            'check_out_date' => 'required|date|after:check_in_date',
+            'room_rate' => 'required|numeric|min:0',
+            // 'total_amount' => 'nullable|numeric|min:0',
+            // 'payment_method' => 'required',
+            'xitem_id' => 'nullable|array',
+            'xitem_id.*' => 'exists:x_items,id',
+            'item_id' => 'nullable|array',
+            'item_id.*' => 'exists:pricelists,id',
+            'quantity' => 'nullable|array',
+            'quantity.*' => 'numeric|min:1',
+            // 'booking_status' => 'required|in:CheckIn,CheckOut',
+        ]);
+
+        // **2. Find the Booking**
         $booking = Bookings::find($request->booking_id);
+        if (!$booking) {
+            return response()->json(['error' => 'Booking not found'], 404);
+        }
 
-        $booking->guestName = $request->guestName;
-
+        // **3. Find the Room**
         $room = Rooms::where('room_number', $request->room_number)->first();
-
         if (!$room) {
             return response()->json(['error' => 'Room not found'], 404);
         }
 
+        // **4. Update Booking Data**
+        $booking->guestName = $request->guestName;
         $booking->room_id = $room->id;
         $booking->email = $request->email;
         $booking->phone_number = $request->phone_number;
-        $booking->check_in_date = $request->check_in_date;
-        $booking->check_out_date = $request->check_out_date;
+        $booking->check_in_date = Carbon::parse($request->check_in_date);
+        $booking->check_out_date = Carbon::parse($request->check_out_date);
+        $booking->room_rate = $request->room_rate;
 
-        $check_in = Carbon::parse($request->check_in_date);
-        $check_out = Carbon::parse($request->check_out_date);
-        $nights = $check_in->diffInDays($check_out);
-
-        $saldo = Saldo::find(1);
-
-        if (!$request->total_amount) {
-            $booking->total_amount = $saldo->room_rate * $nights;
+        // **5. Calculate Number of Nights**
+        $nights = $booking->check_in_date->diffInDays($booking->check_out_date);
+        if ($nights < 1){
+            $nights = 1;
         }
-        else{
+
+        // **6. Calculate Total Amount**
+        if (!$request->total_amount) {
+            $booking->total_amount = $booking->room_rate * $nights;
+        } else {
             $booking->total_amount = $request->total_amount;
         }
 
-        $booking->save();
-
-        $xitemIds = $request->input('xitem_id'); // Array of item IDs
-        $item_ids = $request->input('item_id'); // Array of quantities
-        $quantities = $request->input('quantity'); // Array of quantities
-
+        // **7. Update XItems If Provided**
         if ($request->filled('xitem_id')) {
-            foreach ($xitemIds as $index => $xitemId) {
-                // Cari XItem berdasarkan ID
+            foreach ($request->xitem_id as $index => $xitemId) {
                 $xitem = XItems::find($xitemId);
                 if ($xitem) {
-                    $xitem->pricelist_id = $item_ids[$index];
-                    $xitem->qty = $quantities[$index]; // Update quantity
+                    $xitem->pricelist_id = $request->item_id[$index];
+                    $xitem->qty = $request->quantity[$index];
+                    $booking->total_amount += $xitem->qty * $xitem->pricelists->price;
                     $xitem->save();
                 }
             }
         }
 
-        if ($request->booking_status == 'CheckIn'){
+        // **8. Save the Booking**
+        $booking->save();
+
+        // **9. Determine Next Action Based on Booking Status**
+        if ($booking->status == 'CheckIn') {
             $bookings = Bookings::where('room_id', $room->id)
-                   ->where('status', 'checkIn')
-                   ->first(); // Use get() to retrieve the results
+                ->where('status', 'checkIn')
+                ->first();
 
-            // Extract all booking IDs
-            // $bookingIds = $bookings->pluck('id')->toArray();
-
-            // // Fetch XItems that match any booking_id in the retrieved bookings
-            // $xitems = XItems::whereIn('booking_id', $bookingIds)->get();
             $xitems = XItems::where('booking_id', $bookings->id ?? null)->get();
 
             return view('booking', [
                 "bookings" => $bookings,
                 "xitems" => $xitems,
             ]);
-        } else{
-            $bookings = Bookings::where('status', 'checkOut')->get(); // Retrieves multiple records
-
-            // Extract all booking IDs
+        } else {
+            $bookings = Bookings::where('status', 'checkOut')->get();
             $bookingIds = $bookings->pluck('id')->toArray();
-
-            // Fetch XItems that match any booking_id in the retrieved bookings
             $xitems = XItems::whereIn('booking_id', $bookingIds)->get();
 
             return view('transactions', [
@@ -132,8 +147,8 @@ class BookingsController extends Controller
                 "xitems" => $xitems,
             ]);
         }
-
     }
+
 
     /**
      * Show the form for creating a new resource.

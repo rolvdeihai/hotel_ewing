@@ -134,7 +134,7 @@ $guest = [
 ];
 
 // Data untuk transaksi
-$room_rate = $saldo->room_rate;
+$room_rate = $bookings->room_rate;
 
 $check_in = Carbon::parse($bookings->check_in_date);
 $check_out = Carbon::parse($bookings->check_out_date);

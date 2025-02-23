@@ -126,7 +126,16 @@
                         <a class="nav-link" href="/profile">Profile</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/signin">Sign In</a>
+                        @guest
+                            <a class="nav-link" href="/signin">Sign In</a>
+                        @else
+                            <form action="/logout" method="POST">
+                                @csrf
+                                <button type="submit" class="nav-link btn btn-link" style="border: none; background: none; padding: 0;">
+                                    Sign Out
+                                </button>
+                            </form>
+                        @endguest
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/account-maintenance">Account</a>

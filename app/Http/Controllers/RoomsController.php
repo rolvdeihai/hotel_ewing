@@ -75,6 +75,7 @@ class RoomsController extends Controller
             'room_id' => 'required|numeric|exists:rooms,room_number', // Must be numeric & exist in rooms table
             'check_in_date' => 'required|date',
             'check_out_date' => 'required|date|after:check_in_date',
+            'room_rate' => 'required|numeric|min:0',
             'payment_method' => 'required'
         ]);
 
@@ -92,8 +93,11 @@ class RoomsController extends Controller
         $check_in = Carbon::parse($request->check_in_date);
         $check_out = Carbon::parse($request->check_out_date);
         $nights = $check_in->diffInDays($check_out);
+        if ($nights < 1){
+            $nights = 1;
+        }
 
-        $newCheckIn['total_amount'] = $saldo->room_rate * $nights;
+        $newCheckIn['total_amount'] = $newCheckIn['room_rate'] * $nights;
         $newCheckIn['status'] = 'checkIn';
         Bookings::create($newCheckIn);
 

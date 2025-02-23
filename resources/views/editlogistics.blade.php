@@ -2,6 +2,21 @@
 
 @section('content')
     <section class="container-fluid py-4">
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Edit Item</h2>
             <a href="/logistics" class="btn btn-secondary">

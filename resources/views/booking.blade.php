@@ -18,7 +18,7 @@
                         <th class="border border-dark text-center align-middle">Phone Number</th>
                         <th class="border border-dark text-center align-middle">Check In Date</th>
                         <th class="border border-dark text-center align-middle">Check Out Date</th>
-                        <th class="border border-dark text-center align-middle">Total Amount</th>
+                        <th class="border border-dark text-center align-middle">Room Rate</th>
                         <th class="border border-dark text-center align-middle">Created At</th>
                         <th class="border border-dark text-center align-middle">Updated At</th>
                         <th class="border border-dark text-center align-middle">Actions</th>
@@ -50,7 +50,7 @@
                         <td class="border border-dark align-middle">{{ $bookings['phone_number'] }}</td>
                         <td class="border border-dark text-center align-middle">{{ $bookings['check_in_date'] }}</td>
                         <td class="border border-dark text-center align-middle">{{ $bookings['check_out_date'] }}</td>
-                        <td class="border border-dark text-end align-middle">{{ number_format($bookings['total_amount']) }}</td>
+                        <td class="border border-dark text-end align-middle">{{ number_format($bookings['room_rate']) }}</td>
                         <td class="border border-dark text-center align-middle">{{ $bookings['created_at'] }}</td>
                         <td class="border border-dark text-center align-middle">{{ $bookings['updated_at'] }}</td>
                         <td class="border border-dark text-center align-middle">

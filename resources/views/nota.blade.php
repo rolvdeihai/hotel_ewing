@@ -13,11 +13,14 @@ $guest = [
 ];
 
 // Data untuk transaksi
-$room_rate = $saldo->room_rate;
+$room_rate = $bookings->room_rate;
 
 $check_in = Carbon::parse($bookings->check_in_date);
 $check_out = Carbon::parse($bookings->check_out_date);
 $nights = $check_in->diffInDays($check_out);
+if ($nights < 1){
+    $nights = 1;
+}
 
 $room_total = $room_rate * $nights;
 $tax_rate = $saldo->tax_rate;

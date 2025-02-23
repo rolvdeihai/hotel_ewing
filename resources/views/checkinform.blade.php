@@ -47,11 +47,15 @@
         </div>
         <div class="form-group">
             <label for="arrivalDate">Arrival Date</label>
-            <input type="date" class="form-control" id="check_in_date" name="check_in_date" required>
+            <input type="datetime-local" class="form-control" id="check_in_date" name="check_in_date" required>
         </div>
         <div class="form-group">
             <label for="departureDate">Departure Date</label>
-            <input type="date" class="form-control" id="check_out_date" name="check_out_date" required>
+            <input type="datetime-local" class="form-control" id="check_out_date" name="check_out_date" required>
+        </div>
+        <div class="form-group">
+            <label for="room_rate" class="form-label">Room Rate</label>
+            <input type="number" class="form-control" id="room_rate" name="room_rate" required>
         </div>
         <div class="form-group">
             <label for="payment_method">Payment Method</label>

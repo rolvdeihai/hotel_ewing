@@ -15,8 +15,10 @@ class Bookings extends Model
         'check_in_date',
         'check_out_date',
         'payment_method',
+        'room_rate',
         'total_amount',
         'status',
+        'nota'
     ];
 
     public function rooms()

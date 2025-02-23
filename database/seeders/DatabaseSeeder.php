@@ -7,6 +7,7 @@ use App\Models\Rooms;
 use App\Models\Saldo;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,8 +19,17 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Admin Bos',
+            'email' => 'admin@gmail.com',
+            'role' => 'admin',
+            'password' => Hash::make('1234567890'),
+        ]);
+
+        User::factory()->create([
+            'name' => 'Pegawai',
+            'email' => 'employee@gmail.com',
+            'role' => 'user',
+            'password' => Hash::make('1234567890'),
         ]);
 
         Rooms::factory()->create([

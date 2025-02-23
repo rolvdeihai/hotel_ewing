@@ -1,5 +1,3 @@
-(edit booking)
-
 @extends('layout.Nav')
 
 @section('content')
@@ -57,7 +55,7 @@
             </div>
             <div class="mb-3">
                 <label for="room_number" class="form-label">Room Number</label>
-                <input type="text" class="form-control" id="room_number" name="room_number" value="{{ $booking->rooms->room_number }}" required>
+                <input type="text" class="form-control" id="room_number" name="room_number" value="{{ $booking->rooms->room_number }}" readonly required>
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
@@ -69,15 +67,15 @@
             </div>
             <div class="mb-3">
                 <label for="check_in_date" class="form-label">Check In Date</label>
-                <input type="date" class="form-control" id="check_in_date" name="check_in_date" value="{{ $booking['check_in_date'] }}" required>
+                <input type="datetime-local" class="form-control" id="check_in_date" name="check_in_date" value="{{ $booking['check_in_date'] }}" required>
             </div>
             <div class="mb-3">
                 <label for="check_out_date" class="form-label">Check Out Date</label>
-                <input type="date" class="form-control" id="check_out_date" name="check_out_date" value="{{ $booking['check_out_date'] }}" required>
+                <input type="datetime-local" class="form-control" id="check_out_date" name="check_out_date" value="{{ $booking['check_out_date'] }}" required>
             </div>
             <div class="mb-3">
-                <label for="total_amount" class="form-label">Total Amount</label>
-                <input type="number" class="form-control" id="total_amount" name="total_amount" value="">
+                <label for="room_rate" class="form-label">Room Rate</label>
+                <input type="number" class="form-control" id="room_rate" name="room_rate" value="{{ $booking['room_rate'] }}" required>
             </div>
             @foreach ($xitems as $xitem)
                 <input type="hidden" name="xitem_id[]" value="{{$xitem->id}}">

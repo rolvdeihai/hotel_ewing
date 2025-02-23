@@ -17,9 +17,10 @@ return new class extends Migration
             $table->foreignId('room_id')->constrained()->onDelete('cascade');
             $table->string('email');
             $table->string('phone_number')->nullable();
-            $table->date('check_in_date');
-            $table->date('check_out_date');
+            $table->datetime('check_in_date');  // Change from date to datetime
+            $table->datetime('check_out_date'); // Change from date to datetime
             $table->enum('payment_method', ['credit_card', 'debit_card', 'cash', 'online']);
+            $table->integer('room_rate')->nullable(); // Jika hanya bilangan bulat
             $table->unsignedBigInteger('total_amount');
             $table->enum('status', ['checkIn', 'checkOut']);
             $table->string('nota')->nullable();

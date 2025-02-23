@@ -71,19 +71,27 @@
     </style>
 </head>
 <body>
+    @if(session('loginError'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('loginError') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     <img src="/storage/image/hotel_header.jpg" alt="Hotel Dwipas">
     <div class="signin-container">
         <p class="title">JayJo Management System</p>
         <div class="signin-form">
             <h2 class="text-center">Sign In</h2>
-            <form>
+            <form action="/signin" method="POST" enctype="multipart/form-data">
+                @csrf
                 <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" placeholder="Enter username">
+                    <label for="email" class="form-label">System Email</label>
+                    <input type="text" class="form-control" id="email" name="email" placeholder="Enter email">
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" placeholder="Enter password">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter password">
                 </div>
                 <div class="mb-3">
                     <button type="submit" class="btn btn-primary w-100">Sign In</button>
