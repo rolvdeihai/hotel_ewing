@@ -19,6 +19,7 @@
             top: 0;
             left: 0;
             z-index: -1; /* Send the image to the back */
+            filter: brightness(50%) opacity(80%);
         }
 
         .signin-container {
@@ -71,7 +72,11 @@
     </style>
 </head>
 <body>
-    <img src="/storage/image/hotel_header.jpg" alt="Hotel Dwipas">
+    <div style="position: relative; display: inline-block;">
+        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.3);">
+        <img src="/storage/image/hotel-welcome.jpg" alt="Hotel Dwipas" style="display: block;">
+        </div>
+    </div>
     <div class="signin-container">
         <p class="title">JayJo Management System</p>
         <div class="signin-form">

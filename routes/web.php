@@ -7,11 +7,23 @@ use App\Http\Controllers\KasController;
 use App\Http\Controllers\BookingsController;
 use App\Http\Controllers\TransactionsController;
 use App\Http\Controllers\LogisticsController;
+use App\Models\Bookings;
 use App\Models\Logistics;
+use App\Models\Transactions;
 
 Route::get('/', function () {
     return view('ahotel');
 });
+
+Route::get('/', [RoomsController::class, 'availableRooms']);
+// Route::get('ahotel', [BookingsController::class, 'totalRevenue']);
+
+Route::get('/viewSlideLogistics', [ItemsController::class, 'viewSlideLogistics']);
+
+Route::get('/viewSlideTransactions', [TransactionsController::class, 'viewSlideTransactions']);
+
+// Route::get('/SearchBookings', [BookingsController::class, 'SearchBookings']);
+
 
 Route::get('/rooms', [RoomsController::class, 'index']);
 Route::get('/additem', [ItemsController::class, 'index']);
@@ -99,3 +111,7 @@ Route::post('/cancel_kas',
 
 Route::get('/roomsettings', [RoomsController::class, 'roomsettings']);
 Route::post('/update-room-settings', [RoomsController::class, 'update_room_settings']);
+
+Route::get('/editusers', function () {
+    return view('editusers');
+});

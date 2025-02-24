@@ -19,7 +19,7 @@
         @endif
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Add New Item</h2>
-            <a href="/logistics" class="btn btn-secondary">
+            <a href="/viewItems" class="btn btn-secondary">
                 <i class="bi bi-arrow-left me-2"></i>Back to List
             </a>
         </div>

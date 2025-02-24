@@ -1,7 +1,28 @@
 @extends('layout.Nav')
 
 @section('content')
+<script>
+ document.getElementById('sortButton').addEventListener('click', function () {
+            let table = document.getElementByClass('table').getElementsByTagName('tbody')[0];
+            let rows = Array.from(table.rows);
+            let isAscending = this.getAttribute('data-sort') === 'asc';
+
+            rows.sort((a, b) => {
+                let dateA = new Date(a.cells[4].textContent.trim()); // Extract date from cell
+                let dateB = new Date(b.cells[4].textContent.trim());
+
+                return isAscending ? dateB - dateA : dateA - dateB; // Toggle sorting
+            });
+
+            rows.forEach(row => table.appendChild(row));
+
+            // Toggle sorting order
+            this.setAttribute('data-sort', isAscending ? 'desc' : 'asc');
+            this.textContent = isAscending ? "Sort Newest to Oldest" : "Sort Oldest to Newest";
+        });
+</script>    
     <section class="container-fluid py-4">
+
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Logistics Management</h2>
             <div>
@@ -13,8 +34,56 @@
                 <button class="btn btn-danger">
                     <i class="bi bi-arrow-clockwise me-2"></i>Delete Item
                 </button>
+                
             </div>
         </div>
+
+        <form id="combinedForm" class="d-flex mb-5" action="/viewSlideLogistics" method="get">
+            @csrf
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <label for="search" class="form-label">Search by Item name:</label>
+                    <input class="form-control me-2" type="search" placeholder="Search by Guest Name" aria-label="Search" id="search" name="search">
+                </div>
+                <div class="col-md-4">
+                    <label for="start_date" class="form-label">Start Date:</label>
+                    <input type="date" name="start_date" class="form-control" value="">
+                </div>
+                <div class="col-md-4">
+                    <label for="end_date" class="form-label">End Date:</label>
+                    <input type="date" name="end_date" class="form-control" value="">
+                </div>
+                <div class="col-md-4 d-flex align-items-end mt-3">
+                    <button type="submit" class="btn btn-primary">Search & Filter</button>
+                </div>
+            </div>
+        </form>
+
+        {{-- <div class="d-flex justify-content-between align-items-center mb-4">
+            <form id="searchForm" class="d-flex" action="/viewSlideLogistics" method="get" >
+                @csrf
+                <input class="form-control me-2" type="search" placeholder="Search by Item Name" aria-label="Search" id="search" name="search" >
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+        </div>
+
+        <div>
+            <form method="GET" action="/viewSlideLogistics" class="mb-3">
+                <div class="row g-2">
+                    <div class="col-md-4">
+                        <label for="start_date" class="form-label">Start Date:</label>
+                        <input type="date" name="start_date" class="form-control" value="{{ request('start_date') }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="end_date" class="form-label">End Date:</label>
+                        <input type="date" name="end_date" class="form-control" value="{{ request('end_date') }}">
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                    </div>
+                </div>
+            </form>
+            </div> --}}
 
         <div class="table-responsive">
             <table class="table table-bordered border-dark">
@@ -75,20 +144,8 @@
             </table>
         </div>
 
-        @if(isset($items) && count($items) > 0)
-            <nav aria-label="Page navigation" class="mt-4">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-                    </li>
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">Next</a>
-                    </li>
-                </ul>
-            </nav>
-        @endif
+        <div class="d-flex justify-content-center mt-3">
+            {{ $items->appends(request()->query())->links() }}
+        </div>
     </section>
 @endsection

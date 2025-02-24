@@ -17,7 +17,7 @@
         </div>
         <h3 class="text-center mb-4">Welcome, John Doe!</h3>
 
-        
+ 
         <div class="row">
             <div class="col-md-4">
                 <div class="card text-center mb-4">
@@ -31,15 +31,15 @@
                 <div class="card text-center mb-4">
                     <div class="card-body">
                         <h5 class="card-title">Available Rooms</h5>
-                        <p class="digital-info" id="available-rooms">25</p>
-                    </div>
+                        <p class="digital-info" id="available-rooms">{{ $availableRooms }}</p>
+                        </div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card text-center mb-4">
                     <div class="card-body">
                         <h5 class="card-title">Total Revenue</h5>
-                        <p class="digital-info" id="total-revenue">Rp 1,500,000,000</p>
+                        <p class="digital-info" id="total-revenue">{{ $totalRevenue }}</p>
                     </div>
                 </div>
             </div>
@@ -47,12 +47,14 @@
 
         <div class="row">
             <div class="col-md-12">
-                <h4 class="mt-4">Recent Check-Out</h4>
-                <ul class="list-group">
-                    <li class="list-group-item">Room 102 checked out on 2025-02-17 at 11:00</li>
-                    <li class="list-group-item">Room 103 checked out on 2025-02-16 at 10:30</li>
-                    <li class="list-group-item">Room 101 checked out on 2025-02-15 at 12:00</li>
-                </ul>
+            <h4 class="mt-4">Recent Check-Outs</h4>
+            <ul class="list-group">
+                @foreach ($recentCheckOuts as $checkOut)
+                <li class="list-group-item">
+                    Room 10{{ $checkOut->room_id }} Mr/Mrs {{ $checkOut->guestName }}  checked out on {{ \Carbon\Carbon::parse($checkOut->check_out_date)->format('Y-m-d H:i') }}
+                </li>
+                @endforeach
+            </ul>
             </div>
         </div>
 
@@ -60,10 +62,12 @@
             <div class="col-md-12">
                 <h4 class="mt-4">Recent Check-In</h4>
                 <ul class="list-group">
-                    <li class="list-group-item">Room 104 checked in on 2025-02-18 at 15:00</li>
-                    <li class="list-group-item">Room 105 checked in on 2025-02-17 at 14:00</li>
-                    <li class="list-group-item">Room 106 checked in on 2025-02-16 at 16:00</li>
-                </ul>
+                @foreach ($recentCheckIn as $checkIn)
+                <li class="list-group-item">
+                    Room 10{{ $checkIn->room_id }} Mr/Mrs {{ $checkIn->guestName }}  checked in on {{ \Carbon\Carbon::parse($checkIn->check_in_date)->format('Y-m-d H:i') }}
+                </li>
+                @endforeach
+             </ul>
             </div>
         </div>
     </div>

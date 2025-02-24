@@ -4,6 +4,7 @@
     <section class="container-fluid py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Booked Rooms</h2>
+            
         </div>
 
         <div class="table-responsive">
@@ -25,6 +26,7 @@
                     </tr>
                 </thead>
                 <tbody>
+    
                     <tr>
                         <td class="border border-dark text-center align-middle">{{ $bookings['id'] }}</td>
                         <td class="border border-dark align-middle">
@@ -82,4 +84,7 @@
             </table>
         </div>
     </section>
+
+
+
 @endsection

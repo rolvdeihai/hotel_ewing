@@ -17,10 +17,18 @@ class TransactionsController extends Controller
      */
     public function index()
     {
-        $bookings = Bookings::where('status', 'checkOut')->get(); // Retrieves multiple records
+        $bookings = Bookings::where('status', 'checkOut')->get();
+        $query = Bookings::query();
+        // Retrieves multiple records
 
         // Extract all booking IDs
         $bookingIds = $bookings->pluck('id')->toArray();
+        $grandTotal = 0;
+
+        $grandTotal = $query->sum('total_amount') ?? 0;
+
+        $bookings = $query->orderBy('check_in_date', 'desc')->paginate(10);
+
 
         // Fetch XItems that match any booking_id in the retrieved bookings
         $xitems = XItems::whereIn('booking_id', $bookingIds)->get();
@@ -28,8 +36,43 @@ class TransactionsController extends Controller
         return view('transactions', [
             "bookings" => $bookings,
             "xitems" => $xitems,
+            "grandTotal" => $grandTotal,
         ]);
     }
+
+    public function viewSlideTransactions(Request $request){
+        $query = Bookings::query();
+        $xitems = XItems::all();
+        
+        // Default grand total to 0
+        $grandTotal = 0;
+        
+        // Filter transactions by date range
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('check_in_date', [$request->start_date, $request->end_date]);
+                    
+
+        }
+
+        // Search functionality
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('guestName', 'like', '%' . $search . '%');
+        }
+
+        // Clone the query for total calculation
+                // Calculate grand total from the cloned query
+        $grandTotal = $query->sum('total_amount') ?? 0;
+
+        // Get paginated results
+        $bookings = $query->orderBy('check_in_date', 'desc')->paginate(10);
+
+        return view('transactions', compact('bookings', 'xitems', 'grandTotal'));
+
+
+    }
+
+
 
     public function nota(Request $request)
     {

@@ -16,26 +16,43 @@ class KasController extends Controller
     {
         $cashTransactions = Kas::orderBy('created_at', 'desc')->paginate(10);// Assuming Cash is your model
         $saldo = Saldo::find(1);
+        $grandTotal = 0;
+        $grandTotal = Kas::sum('transaction') ?? 0;
 
         return view('viewkas', [
             "cashTransactions" => $cashTransactions,
-            "saldo" => $saldo
+            "saldo" => $saldo,
+            "grandTotal" => $grandTotal
         ]);
     }
-
+    
     public function viewSlide(Request $request)
     {
-        $query = Kas::query(); // Assuming 'Kas' is your model
-
-        // Filter transactions by date range
-        if ($request->has('start_date') && $request->has('end_date')) {
+        $saldo = Saldo::find(1);
+        
+        // Build the base query for filtering
+        $query = Kas::query();
+        
+        // Apply filters
+        if ($request->filled('start_date') && $request->filled('end_date')) {
             $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
         }
-
-        // Sort transactions by latest date and paginate results
-        $cashTransactions = $query->orderBy('created_at', 'desc')->paginate(10); // 10 items per page
-
-        return view('viewkas', compact('cashTransactions'));
+        
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('description', 'like', '%' . $search . '%');
+        }
+        
+        // Get all filtered records (without pagination) for total calculation
+        $filteredRecords = $query->get();
+        
+        // Calculate grand total from filtered records
+        $grandTotal = $filteredRecords->sum('transaction');
+        
+        // Get paginated records for display
+        $cashTransactions = $query->orderBy('created_at', 'desc')->paginate(10);
+    
+        return view('viewkas', compact('cashTransactions', 'saldo', 'grandTotal'));
     }
 
 
