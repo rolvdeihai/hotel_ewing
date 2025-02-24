@@ -73,6 +73,7 @@
                             <td colspan="5" class="text-center border border-dark">No transactions found.</td>
                         </tr>
                     @endforelse
+                    <h1>{{ number_format($grandTotal) }}</h1>
                 </tbody>
             </table>
         </div>

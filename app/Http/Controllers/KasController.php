@@ -14,12 +14,15 @@ class KasController extends Controller
      */
     public function viewKas()
     {
-        $cashTransactions = Kas::orderBy('created_at', 'desc')->paginate(10);// Assuming Cash is your model
+        $cashTransactions = Kas::orderBy('created_at', 'desc')->paginate(3);// Assuming Cash is your model
         $saldo = Saldo::find(1);
+        $grandTotal = 0;
+        $grandTotal = Kas::sum('transaction') ?? 0;
 
         return view('viewkas', [
             "cashTransactions" => $cashTransactions,
-            "saldo" => $saldo
+            "saldo" => $saldo,
+            "grandTotal" => $grandTotal
         ]);
     }
 
@@ -35,7 +38,9 @@ class KasController extends Controller
         // Sort transactions by latest date and paginate results
         $cashTransactions = $query->orderBy('created_at', 'desc')->paginate(10); // 10 items per page
 
-        return view('viewkas', compact('cashTransactions'));
+        return view('viewkas', [
+            "cashTransactions" => $cashTransactions,
+        ]);
     }
 
 
