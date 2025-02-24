@@ -24,6 +24,7 @@
             </a>
         </div>
 
+        
         <form action="/addTransaction" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="mb-3">

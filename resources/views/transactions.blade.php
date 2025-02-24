@@ -4,6 +4,28 @@
     <section class="container-fluid py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Transactions</h2>
+            <div>
+                <form id="combinedForm" class="d-flex" action="/viewSlideTransactions" method="get">
+                    @csrf
+                    <div class="row g-2">
+                        <div class="col-md-4">
+                            <label for="search" class="form-label">Search by Guest Name:</label>
+                            <input class="form-control me-2" type="search" placeholder="Search by Guest Name" aria-label="Search" id="search" name="search">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="start_date" class="form-label">Start Date:</label>
+                            <input type="date" name="start_date" class="form-control" value="">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="end_date" class="form-label">End Date:</label>
+                            <input type="date" name="end_date" class="form-control" value="">
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary">Search & Filter</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
 
         <div class="table-responsive">
@@ -24,7 +46,7 @@
                         <th class="border border-dark text-center align-middle">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+               
                     @forelse ($bookings as $booking)
                         <tr>
                             <td class="border border-dark text-center align-middle">{{ $booking->id }}</td>
@@ -84,7 +106,23 @@
                         </tr>
                     @endforelse
                 </tbody>
+                @if ($grandTotal !== null)
+                    <tfoot class="table-dark">
+                        <tr>
+                            <td colspan="2" class="border border-dark text-end align-middle"><strong>Grand Total:</strong></td>
+                            <td class="border border-dark text-end align-middle"><strong>{{ number_format($grandTotal) }}</strong></td>
+                            <td colspan="9" class="border border-dark"></td>
+                        </tr>
+                    </tfoot>
+                @endif
+               
             </table>
         </div>
+     {{-- pagination --}}
+     <div class="d-flex justify-content-center mt-3">
+        {{ $bookings->appends(request()->query())->links() }}
+    </div>
+        
     </section>
+    
 @endsection

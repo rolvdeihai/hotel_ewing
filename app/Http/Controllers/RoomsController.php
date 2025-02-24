@@ -260,4 +260,35 @@ class RoomsController extends Controller
     {
         //
     }
+    public function availableRooms(Request $request)
+    {
+        $availableRoomsCount = Rooms::where('status', 'vacant')->count();
+
+        // Get today's date or a specific date from the request
+        $date = $request->input('date', Carbon::today()->toDateString());
+
+        // Calculate total revenue for the specified date
+        $totalRevenue = Bookings::whereDate('check_out_date', $date)
+            ->sum('total_amount'); // Assuming 'amount' is the field that holds the revenue
+
+        
+        $recentCheckOuts = Bookings::where('status', 'checkout')
+        ->orderBy('check_out_date', 'desc') // Assuming 'check_out_date' is the field for check-out date
+        ->take(5) // Get the last 5 check-outs
+        ->get();
+
+        $recentCheckIn = Bookings::where('status', 'checkin')
+        ->orderBy('check_in_date', 'desc') // Assuming 'check_out_date' is the field for check-out date
+        ->take(5) // Get the last 5 check-outs
+        ->get();
+        
+
+        return view('ahotel', [
+            'availableRooms' => $availableRoomsCount,
+            'totalRevenue' => $totalRevenue,
+            'recentCheckOuts' => $recentCheckOuts,
+            'recentCheckIn' => $recentCheckIn,
+
+        ]);
+    }
 }

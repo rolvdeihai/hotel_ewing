@@ -24,7 +24,7 @@ class ItemsController extends Controller
 
     public function viewItems()
     {
-        $items = Items::simplePaginate(8);
+        $items = Items::simplePaginate(10);
 
         return view('logistics', [
             "items" => $items,
@@ -33,7 +33,7 @@ class ItemsController extends Controller
 
     public function viewItemsSell()
     {
-        $items = Pricelist::simplePaginate(8);
+        $items = Pricelist::simplePaginate(10);
 
         return view('price_list', [
             "items" => $items,
@@ -177,5 +177,23 @@ class ItemsController extends Controller
     public function destroy(Items $items)
     {
         //
+    }
+    public function viewSlideLogistics(Request $request)
+    {
+        $query = Items::query(); // Assuming 'Kas' is your model
+
+        // Filter transactions by date range
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('name', 'like', '%' . $search . '%');
+            }
+        // Sort transactions by latest date and paginate results
+        $items = $query->orderBy('created_at', 'desc')->paginate(10); // 10 items per page
+
+        return view('logistics', compact('items'));
     }
 }

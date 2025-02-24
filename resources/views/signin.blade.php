@@ -19,6 +19,7 @@
             top: 0;
             left: 0;
             z-index: -1; /* Send the image to the back */
+            filter: brightness(50%) opacity(80%);
         }
 
         .signin-container {

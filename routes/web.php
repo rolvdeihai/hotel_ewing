@@ -8,19 +8,14 @@ use App\Http\Controllers\BookingsController;
 use App\Http\Controllers\TransactionsController;
 use App\Http\Controllers\LogisticsController;
 use App\Http\Controllers\AccountsController;
+use App\Models\Bookings;
 use App\Models\Logistics;
-
-Route::get('/', function () {
-    return view('ahotel');
-});
-
-// Route::post('/signin', [AccountsController::class, 'login'])->middleware('web');
-// Route::post('/logout', [AccountsController::class, 'logout'])->middleware('web');
+use App\Models\Transactions;
 
 Route::middleware(['web'])->group(function () {
-    Route::get('/', function () {
-        return view('ahotel');
-    });
+    Route::get('/', [RoomsController::class, 'availableRooms']);
+    Route::get('/viewSlideLogistics', [ItemsController::class, 'viewSlideLogistics']);
+    Route::get('/viewSlideTransactions', [TransactionsController::class, 'viewSlideTransactions']);
 
     Route::post('/signin', [AccountsController::class, 'login']);
     Route::post('/logout', [AccountsController::class, 'logout']);

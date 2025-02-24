@@ -10,19 +10,25 @@
         </div>
 
         <!-- Filter Form -->
-        <form method="GET" action="/viewSlide" class="mb-3">
+        <form id="combinedForm" class="d-flex mb-5" action="/viewSlide" method="get">
+            @csrf
             <div class="row g-2">
                 <div class="col-md-4">
+                    <label for="search" class="form-label">Search by Item name:</label>
+                    <input class="form-control me-2" type="search" placeholder="Search by Description" aria-label="Search" id="search" name="search">
+                </div>
+                <div class="col-md-4">
                     <label for="start_date" class="form-label">Start Date:</label>
-                    <input type="date" name="start_date" class="form-control" value="{{ request('start_date') }}">
+                    <input type="date" name="start_date" class="form-control" value="">
                 </div>
                 <div class="col-md-4">
                     <label for="end_date" class="form-label">End Date:</label>
-                    <input type="date" name="end_date" class="form-control" value="{{ request('end_date') }}">
+                    <input type="date" name="end_date" class="form-control" value="">
                 </div>
-                <div class="col-md-4 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary">Filter</button>
+                <div class="col-md-4 d-flex align-items-end mt-3">
+                    <button type="submit" class="btn btn-primary">Search & Filter</button>
                 </div>
+                
             </div>
         </form>
 
@@ -52,7 +58,6 @@
                                 {{ $transaction->created_at->format('Y-m-d H:i:s') }}
                             </td>
                             <td class="border border-dark text-center align-middle">
-
                                 <form action="/delete_kas" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <input type="hidden" name="transaction_id" value="{{ $transaction->id }}">
@@ -63,24 +68,34 @@
                                     <input type="hidden" name="transaction_id" value="{{ $transaction->id }}">
                                     <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('Are you sure you want to cancel this transaction?')">
                                         <i class="bi bi-trash"></i> Cancel
-                                    </button>
+                                    </button>
                                 </form>
-
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center border border-dark">No transactions found.</td>
+                            <td colspan="6" class="text-center border border-dark">No transactions found.</td>
                         </tr>
                     @endforelse
                     <h1>{{ number_format($grandTotal) }}</h1>
                 </tbody>
+
+                @if ($grandTotal !== null)
+                <tfoot class="table-dark">
+                    <tr>
+                        <td colspan="2" class="border border-dark text-end align-middle"><strong>Grand Total:</strong></td>
+                        <td class="border border-dark text-end align-middle"><strong>{{ number_format($grandTotal) }}</strong></td>
+                        <td colspan="9" class="border border-dark"></td>
+                    </tr>
+                </tfoot>
+            @endif
+                
             </table>
         </div>
 
         <!-- Pagination -->
         <div class="d-flex justify-content-center mt-3">
-            {{ $cashTransactions->links() }}
+            {{ $cashTransactions->appends(request()->query())->links() }}
         </div>
     </section>
 
@@ -101,28 +116,20 @@
                         let saldoB = parseFloat(b.cells[3].textContent.replace(/,/g, ''));
 
                         return isAscending ? saldoB - saldoA : saldoA - saldoB;
-                        // Ascending → Sort saldo descending (largest first)
-                        // Descending → Sort saldo ascending (smallest first)
                     }
 
                     return isAscending ? dateA - dateB : dateB - dateA;
-                    // Ascending → Sort date oldest to newest
-                    // Descending → Sort date newest to oldest
                 });
 
                 rows.forEach(row => table.appendChild(row));
 
-                // Toggle sorting order
                 isAscending = !isAscending;
                 sortButton.textContent = isAscending ? "Sort Oldest to Newest" : "Sort Newest to Oldest";
             }
 
-            // Initial sorting on page load (Descending by Date, Ascending by Saldo)
             sortTable();
 
-            // Attach sorting to button click
             sortButton.addEventListener('click', sortTable);
         });
     </script>
-
 @endsection

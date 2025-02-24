@@ -18,10 +18,13 @@ class KasController extends Controller
         $saldo = Saldo::find(1);
         $grandTotal = 0;
         $grandTotal = Kas::sum('transaction') ?? 0;
+        $grandTotal = 0;
+        $grandTotal = Kas::sum('transaction') ?? 0;
 
         return view('viewkas', [
             "cashTransactions" => $cashTransactions,
             "saldo" => $saldo,
+            "grandTotal" => $grandTotal,
             "grandTotal" => $grandTotal
         ]);
     }

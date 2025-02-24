@@ -12,6 +12,8 @@ use App\Models\Pricelist;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
+
+
 class BookingsController extends Controller
 {
     /**
@@ -278,4 +280,78 @@ class BookingsController extends Controller
         $booking->delete();
         return redirect()->intended('/rooms');
     }
-}
+
+    // public function viewSlideTransactions(Request $request)
+    // {
+    //     $query = Bookings::query(); // Assuming 'Kas' is your model
+    //     $xitems = XItems::all();
+    //     // Filter transactions by date range
+    //     if ($request->filled('start_date') && $request->filled('end_date')) {
+    //         $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
+    //     }
+
+    //     // Sort transactions by latest date and paginate results
+    //     $bookings = $query->orderBy('created_at', 'desc')->paginate(10); // 10 items per page
+
+    //     return view('transactions', compact('bookings','xitems'));
+    // }
+
+
+
+    // public function SearchBookings(Request $request)
+    // {
+    //     // Get the search query from the request
+        
+
+    //     $xitems = XItems::all();
+
+
+    //     // Query the database for bookings
+    //     if ($request->filled('search')) {
+    //         $search = $request->search;
+    //         // Use the 'like' operator to filter by guest name
+    //         // $bookings = Bookings::where('guestName', 'like', '%' . $search . '%')->get();
+    //         $bookings = Bookings::where('guestName', 'like', '%' . $search . '%')->get();
+    //         // $bookings = Bookings::all();
+    //     } else {
+    //         // If no search query, get all bookings
+    //         $bookings = Bookings::all();
+    //     }
+
+    //     return view('transactions', compact('bookings','xitems'));
+
+    //     // Return the view with the bookings data
+    // }
+    public function viewSlideTransactions(Request $request){
+        $query = Bookings::query();
+        $xitems = XItems::all();
+        
+        // Default grand total to 0
+        $grandTotal = 0;
+        
+        // Filter transactions by date range
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('check_in_date', [$request->start_date, $request->end_date]);
+                    
+
+        }
+
+        // Search functionality
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('guestName', 'like', '%' . $search . '%');
+        }
+
+        // Clone the query for total calculation
+                // Calculate grand total from the cloned query
+        $grandTotal = $query->sum('total_amount') ?? 0;
+
+        // Get paginated results
+        $bookings = $query->orderBy('check_in_date', 'desc')->paginate(10);
+
+        return view('transactions', compact('bookings', 'xitems', 'grandTotal'));
+
+
+    }
+    
+}    
