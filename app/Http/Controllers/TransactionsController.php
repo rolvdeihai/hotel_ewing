@@ -43,14 +43,14 @@ class TransactionsController extends Controller
     public function viewSlideTransactions(Request $request){
         $query = Bookings::query();
         $xitems = XItems::all();
-        
+
         // Default grand total to 0
         $grandTotal = 0;
-        
+
         // Filter transactions by date range
         if ($request->filled('start_date') && $request->filled('end_date')) {
             $query->whereBetween('check_in_date', [$request->start_date, $request->end_date]);
-                    
+
 
         }
 

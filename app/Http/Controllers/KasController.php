@@ -14,10 +14,8 @@ class KasController extends Controller
      */
     public function viewKas()
     {
-        $cashTransactions = Kas::orderBy('created_at', 'desc')->paginate(3);// Assuming Cash is your model
+        $cashTransactions = Kas::orderBy('created_at', 'desc')->paginate(10);// Assuming Cash is your model
         $saldo = Saldo::find(1);
-        $grandTotal = 0;
-        $grandTotal = Kas::sum('transaction') ?? 0;
         $grandTotal = 0;
         $grandTotal = Kas::sum('transaction') ?? 0;
 
@@ -25,25 +23,36 @@ class KasController extends Controller
             "cashTransactions" => $cashTransactions,
             "saldo" => $saldo,
             "grandTotal" => $grandTotal,
-            "grandTotal" => $grandTotal
         ]);
     }
 
     public function viewSlide(Request $request)
     {
-        $query = Kas::query(); // Assuming 'Kas' is your model
+        $saldo = Saldo::find(1);
 
-        // Filter transactions by date range
-        if ($request->has('start_date') && $request->has('end_date')) {
+        // Build the base query for filtering
+        $query = Kas::query();
+
+        // Apply filters
+        if ($request->filled('start_date') && $request->filled('end_date')) {
             $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
         }
 
-        // Sort transactions by latest date and paginate results
-        $cashTransactions = $query->orderBy('created_at', 'desc')->paginate(10); // 10 items per page
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('description', 'like', '%' . $search . '%');
+        }
 
-        return view('viewkas', [
-            "cashTransactions" => $cashTransactions,
-        ]);
+        // Get all filtered records (without pagination) for total calculation
+        $filteredRecords = $query->get();
+
+        // Calculate grand total from filtered records
+        $grandTotal = $filteredRecords->sum('transaction');
+
+        // Get paginated records for display
+        $cashTransactions = $query->orderBy('created_at', 'desc')->paginate(10);
+
+        return view('viewkas', compact('cashTransactions', 'saldo', 'grandTotal'));
     }
 
 

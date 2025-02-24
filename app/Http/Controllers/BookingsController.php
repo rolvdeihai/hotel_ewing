@@ -128,7 +128,7 @@ class BookingsController extends Controller
         $booking->save();
 
         // **9. Determine Next Action Based on Booking Status**
-        if ($booking->status == 'CheckIn') {
+        if ($booking->status === 'checkIn') {
             $bookings = Bookings::where('room_id', $room->id)
                 ->where('status', 'checkIn')
                 ->first();
@@ -141,12 +141,25 @@ class BookingsController extends Controller
             ]);
         } else {
             $bookings = Bookings::where('status', 'checkOut')->get();
+            $query = Bookings::query();
+            // Retrieves multiple records
+
+            // Extract all booking IDs
             $bookingIds = $bookings->pluck('id')->toArray();
+            $grandTotal = 0;
+
+            $grandTotal = $query->sum('total_amount') ?? 0;
+
+            $bookings = $query->orderBy('check_in_date', 'desc')->paginate(10);
+
+
+            // Fetch XItems that match any booking_id in the retrieved bookings
             $xitems = XItems::whereIn('booking_id', $bookingIds)->get();
 
             return view('transactions', [
                 "bookings" => $bookings,
                 "xitems" => $xitems,
+                "grandTotal" => $grandTotal
             ]);
         }
     }
@@ -301,7 +314,7 @@ class BookingsController extends Controller
     // public function SearchBookings(Request $request)
     // {
     //     // Get the search query from the request
-        
+
 
     //     $xitems = XItems::all();
 
@@ -325,14 +338,14 @@ class BookingsController extends Controller
     public function viewSlideTransactions(Request $request){
         $query = Bookings::query();
         $xitems = XItems::all();
-        
+
         // Default grand total to 0
         $grandTotal = 0;
-        
+
         // Filter transactions by date range
         if ($request->filled('start_date') && $request->filled('end_date')) {
             $query->whereBetween('check_in_date', [$request->start_date, $request->end_date]);
-                    
+
 
         }
 
@@ -353,5 +366,5 @@ class BookingsController extends Controller
 
 
     }
-    
-}    
+
+}

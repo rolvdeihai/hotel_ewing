@@ -75,15 +75,6 @@ Route::middleware(['web'])->group(function () {
     Route::post('/nota',
     [TransactionsController::class, 'nota']);
 
-    Route::post('/editbooking',
-    [BookingsController::class, 'editbooking']);
-
-    Route::post('/edittransaction',
-    [TransactionsController::class, 'edittransaction']);
-
-    Route::post('/updatebooking',
-    [BookingsController::class, 'updatebooking']);
-
     Route::post('/editlogistics',
     [LogisticsController::class, 'editlogistics']);
 
@@ -113,6 +104,14 @@ Route::middleware(['web', 'role'])->group(function () {
 
     Route::post('/cancel_kas',
     [KasController::class, 'cancel_kas']);
+
+    Route::post('/editbooking',
+    [BookingsController::class, 'editbooking']);
+    Route::post('/updatebooking',
+    [BookingsController::class, 'updatebooking']);
+
+    Route::post('/edittransaction',
+    [TransactionsController::class, 'edittransaction']);
 
     Route::get('/roomsettings', [RoomsController::class, 'roomsettings']);
     Route::post('/update-room-settings', [RoomsController::class, 'update_room_settings']);
