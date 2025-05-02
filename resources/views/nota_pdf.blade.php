@@ -13,9 +13,12 @@ $room_rate = $bookings->room_rate;
 
 $check_in = Carbon::parse($bookings->check_in_date);
 $check_out = Carbon::parse($bookings->check_out_date);
-$nights = $check_in->diffInDays($check_out);
+$hours = $check_in->diffInHours($check_out);
+// if ($nights < 1){
+//     $nights = 1;
+// }
 
-$room_total = $room_rate * $nights;
+$nights = ceil($hours/24);
 $tax_rate = $saldo->tax_rate;
 $tax = $bookings->total_amount * $tax_rate;
 $total = $bookings->total_amount + $tax;
@@ -28,7 +31,7 @@ $transaction = [
     'room_number' => $bookings->rooms->room_number,
     'nights' => $nights,
     'room_rate' => $room_rate,
-    'room_total' => $room_total,
+    'room_total' => $room_rate * $nights,
     'payment_method' => $bookings->payment_method,
     'additional_charges' => $xitems->map(function ($item) {
         return [
@@ -93,7 +96,7 @@ $transaction = [
                 <td>KAMAR</td>
                 <td>: {{ $bookings->rooms->room_number }}</td>
             </tr>
-            
+
             <!-- CAFETARIA -->
             <tr>
                 <td class="section-header" colspan="4">ITEM TAMBAHAN</td>
@@ -122,7 +125,7 @@ $transaction = [
                     </table>
                 </td>
             </tr>
-            
+
             <!-- BINTITI LAUNDRY -->
             <tr>
                 <td class="section-header" colspan="4">BINTITI LAUNDRY</td>
@@ -142,7 +145,7 @@ $transaction = [
                     </table>
                 </td>
             </tr>
-            
+
             <!-- PERMANENT/TEAM -->
             <tr>
                 <td class="section-header" colspan="4">PERINCIAN/ITEM</td>
@@ -165,7 +168,7 @@ $transaction = [
                     </table>
                 </td>
             </tr>
-            
+
             <!-- LAIN-LAIN -->
             <tr>
                 <td class="section-header" colspan="4">LAIN-LAIN</td>
@@ -185,7 +188,7 @@ $transaction = [
                     </table>
                 </td>
             </tr>
-            
+
             <!-- JUMLAH AMOUNT -->
             <tr>
                 <td class="jumlah-amount-header" style="font-size :11pt" colspan="4">JUMLAH AMOUNT</td>
@@ -204,7 +207,7 @@ $transaction = [
             </tr>
         </table>
     </div>
-    
+
     <div class="signatures">
         <table class="sign-table">
             <tr>
@@ -220,7 +223,7 @@ $transaction = [
             </tr>
         </table>
     </div>
-    
+
     <div class="invoice-footer">
         <span class="invoice-id">{{ $transaction['transaction_id'] }}</span>
     </div>
@@ -231,14 +234,14 @@ $transaction = [
         size: landscape;
         margin: 5mm;
     }
-    
+
     body {
         margin: 0;
         padding: 0;
         font-size: 9pt;
         font-family: Arial, sans-serif;
     }
-    
+
     .container-landscape {
         width: 90%;
         max-width: 297mm; /* A4 landscape width */
@@ -247,89 +250,89 @@ $transaction = [
         padding: 5mm;
         box-sizing: border-box;
     }
-    
+
     .header-row {
         display: flex;
         align-items: center;
         margin-bottom: 3mm;
     }
-    
+
     .logo-container {
         width: 15mm;
         margin-right: 3mm;
     }
-    
+
     .logo {
         max-width: 100%;
         height: auto;
     }
-    
+
     .hotel-info {
         text-align: center;
         flex-grow: 1;
     }
-    
+
     .hotel-info h2 {
         margin: 0 0 2mm;
         font-size: 12pt;
     }
-    
+
     .hotel-info p {
         margin: 0;
         font-size: 8pt;
     }
-    
+
     .customer-details {
         margin-bottom: 3mm;
     }
-    
+
     .info-table {
         width: 100%;
         border-collapse: collapse;
         font-size: 8pt;
     }
-    
+
     .info-table td {
         padding: 1mm 1mm;
         border: 0.5pt solid #000;
     }
-    
+
     .form-container {
         margin-bottom: 3mm;
     }
-    
+
     .receipt-table {
         width: 100%;
         border-collapse: collapse;
         border: 0.5pt solid #000;
     }
-    
+
     .receipt-table td {
         border: 0.5pt solid #000;
         padding: 1mm 1mm;
         font-size: 8pt;
     }
-    
+
     .inner-table {
         width: 100%;
         border-collapse: collapse;
         border: 0.5pt solid #000;
     }
-    
+
     .inner-table th, .inner-table td {
         padding: 1mm;
         font-size: 8pt;
         border: 0.5pt solid #000;
         border-bottom: 0.5pt solid #ddd;
     }
-    
+
     .section-header {
         font-weight: bold;
         background-color: #f2f2f2;
         text-align: center;
         font-size: 9pt;
     }
-    
+
     .jumlah-amount-header {
         font-weight: bold;
         background-color: #f2f2f2;
@@ -337,54 +340,54 @@ $transaction = [
         font-size: 11pt;
         color: #000;
     }
-    
+
     .total-amount {
         font-weight: bold;
         font-size: 10pt;
     }
-    
+
     .mini-row {
         height: 3mm;
     }
-    
+
     .text-center {
         text-align: center;
     }
-    
+
     .text-right {
         text-align: right;
     }
-    
+
     .signatures {
         margin-top: 3mm;
     }
-    
+
     .sign-table {
         width: 100%;
         border-collapse: collapse;
     }
-    
+
     .sign-table td {
         vertical-align: bottom;
         padding: 1mm;
         font-size: 7pt;
     }
-    
+
     .signature-line {
         border-top: 0.5pt solid #000;
         margin-top: 5mm;
     }
-    
+
     .invoice-footer {
         margin-top: 2mm;
         text-align: right;
     }
-    
+
     .invoice-id {
         font-size: 9pt;
         color: blue;
     }
-    
+
     @media print {
         .container-landscape {
             width: 100%;

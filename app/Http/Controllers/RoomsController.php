@@ -87,12 +87,20 @@ class RoomsController extends Controller
         // Assign room ID instead of room number
         $newCheckIn['room_id'] = $room->id;
 
+        // $check_in = Carbon::parse($request->check_in_date);
+        // $check_out = Carbon::parse($request->check_out_date);
+        // $nights = $check_in->diffInDays($check_out);
+        // if ($nights < 1){
+        //     $nights = 1;
+        // }
+
         $check_in = Carbon::parse($request->check_in_date);
         $check_out = Carbon::parse($request->check_out_date);
-        $nights = $check_in->diffInDays($check_out);
-        if ($nights < 1){
-            $nights = 1;
-        }
+        $nights = $check_in->diffInHours($check_out);
+        $nights = ceil($nights/24);
+        // if ($nights < 1){
+        //     $nights = 1;
+        // }
 
         $newCheckIn['total_amount'] = $newCheckIn['room_rate'] * $nights;
         $newCheckIn['status'] = 'checkIn';

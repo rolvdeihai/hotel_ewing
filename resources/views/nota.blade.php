@@ -36,7 +36,7 @@ $transaction = [
     'room_number' => $bookings->rooms->room_number,
     'nights' => $nights,
     'room_rate' => $room_rate,
-    'room_total' => $room_total,
+    'room_total' => $room_rate * $nights,
     'payment_method' => $bookings->payment_method,
     'additional_charges' => $xitems->map(function ($item) {
         return [
