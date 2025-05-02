@@ -22,7 +22,8 @@ $hours = $check_in->diffInHours($check_out);
 //     $nights = 1;
 // }
 
-$room_total = $room_rate * ceil($hours/24);
+$nights = ceil($hours/24);
+$room_total = $room_rate * $nights;
 $tax_rate = $saldo->tax_rate;
 $tax = $bookings->total_amount * $tax_rate;
 $total = $bookings->total_amount + $tax;
