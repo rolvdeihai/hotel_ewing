@@ -1,128 +1,3 @@
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hotel Management System</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            margin: 0; /* Remove default margin */
-            font-family: Arial, sans-serif;
-        }
-
-        .navbar {
-            background-color: #343a40;
-            position: fixed; /* Fixed position */
-            z-index: 1000; /* High z-index to ensure it stays on top */
-            width: 12%; /* Width of the navbar as a percentage */
-            top: 50px; /* Start below the navbar-top */
-            height: calc(100% - 50px); /* Full height minus the navbar-top height */
-            align-items : flex-start;
-        }
-
-        .navbar-nav {
-            display: flex; /* Use flexbox for layout */
-            flex-direction: column; /* Stack items vertically */
-            padding: 0; /* Remove any default padding */
-            margin-top: 0; /* Ensure no margin at the top */
-        }
-
-        .nav-item {
-            margin-bottom: 5%; /* Space between nav items as a percentage */
-            margin-top: 5%;
-            position: relative;
-            display: flex;
-        }
-
-        .nav-link {
-            display: block;
-            width: 100%;
-            padding: 5%; /* Add padding around the link text as a percentage */
-            color: #ffffff; /* Text color */
-            text-decoration: none; /* Remove underline */
-        }
-
-        .nav-link:hover {
-            color: #adb5bd; /* Hover color */
-        }
-
-        .navbar-top {
-            background-color: #343a40; /* Same color as the original navbar */
-            position: fixed; /* Fixed position */
-            z-index: 1000; /* High z-index to ensure it stays on top */
-            top: 0;
-            width: 100%;
-            height: 50px; /* Height of the navbar-top */
-            padding-left: 15%; /* Padding to account for the navbar width */
-        }
-
-        .navbar-top .navbar-brand,
-        .navbar-top .nav-link {
-            color: #ffffff; /* Text color */
-        }
-
-        .navbar-top .nav-link:hover {
-            color: #adb5bd; /* Hover color */
-        }
-
-        .navbar-top-content {
-           height : 50px;
-        }
-        .container {
-            margin-top: 1%;
-            margin-left: 15%; /* Space for the navbar */
-            padding: 1%; /* Padding as a percentage */
-            display : inline-block;
-        }
-
-        .card {
-            margin-bottom: 2%; /* Margin as a percentage */
-            display: flex;
-        }
-
-        .title-box {
-            background-color: #495057;
-            color: #ffffff;
-            text-align: center;
-            margin-bottom: 2%; /* Margin as a percentage */
-            display: flex;
-            position: relative;
-        }
-        .navbar .container, .navbar .container-fluid, .navbar .container-lg,
-        .navbar .container-md, .navbar .container-sm, .navbar .container-xl{
-            align-items : flex-start;
-        }
-        .nav-link{
-            display: flex;
-            padding-bottom : 10px;
-            transition: color 0.3s ease;
-        }
-
-        .nav-link :hover{
-            color: rgba(114, 113, 113, 0.7);
-        }
-    </style>
-
-    </head>
-
-<!-- Main Content -->
-<div class="container mt-4" style="margin-left: 270px;">
-    <!-- Content will be loaded from separate files -->
-</div>
-
-<!-- Bootstrap JS and dependencies -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-<div class="container">
-
 <?php
 use Carbon\Carbon;
 
@@ -168,107 +43,353 @@ $transaction = [
     'total' => $total,
 ];
 ?>
-
-<section class="container-fluid py-4">
-    <div class="text-center mb-4">
-        <h1>INVOICE</h1>
-        <p>Number: {{ $transaction['transaction_id'] }}</p>
-        <p>Date: {{ $transaction['date'] }}</p>
-    </div>
-
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <h5>CUSTOMER DETAIL</h5>
-            <p><b>Name:</b> {{ $guest['name'] }}</p>
-            <p><b>Email:</b> {{ $guest['email'] }}</p>
-            <p><b>Phone:</b> {{ $guest['phone_number'] }}</p>
+<!-- Hotel Invoice Template - Landscape -->
+<div class="container-landscape">
+    <div class="header-row">
+        <div class="logo-container">
+            <img src="/storage/image/hotel-logo.png" alt="Hotel Logo" class="logo">
         </div>
-        <div class="col-md-6 text-end">
-            <h5>PAYMENT DETAIL</h5>
-            <p><b>Payment Method:</b> {{ $transaction['payment_method'] }}</p>
-            <p><b>Status:</b> Lunas</p>
+        <div class="hotel-info">
+            <h2>HOTEL DWIPA WISATA</h2>
+            <p>Jl. Yos Sudarso, Ikan Tembakang No. 2-B</p>
+            <p>TELP. (0721) 482722 - 485306 Bandar Lampung</p>
         </div>
     </div>
 
-    <h5>PURCHASE DETAIL</h5>
-    <table class="table table-bordered mt-2">
-        <thead>
+    <div class="customer-details">
+        <table class="info-table">
             <tr>
-                <th>No</th>
-                <th>Item Description</th>
-                <th>Qty</th>
-                <th>Price (Rp)</th>
-                <th>Total (Rp)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>Room {{ $transaction['room_number'] }} - {{ $transaction['nights'] }} night(s)</td>
-                <td>{{ $transaction['nights'] }}</td>
-                <td>{{ number_format($transaction['room_rate']) }}</td>
-                <td>{{ number_format($transaction['room_total']) }}</td>
-            </tr>
-            @foreach ($transaction['additional_charges'] as $index => $charge)
-                <tr>
-                    <td>{{ $index + 2 }}</td>
-                    <td>{{ $charge['item'] }}</td>
-                    <td>{{ $charge['quantity'] }}</td>
-                    <td>{{ number_format($charge['price']) }}</td>
-                    <td>{{ number_format($charge['total']) }}</td>
-                </tr>
-            @endforeach
-        </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="4" class="text-right"><b>Subtotal:</b></td>
-                <td>{{ number_format($transaction['subtotal']) }}</td>
+                <td width="15%"><strong>NAMA:</strong></td>
+                <td width="35%">{{ $guest['name'] }}</td>
+                <td width="15%"><strong>PAYMENT:</strong></td>
+                <td width="35%">{{ $transaction['payment_method'] }}</td>
             </tr>
             <tr>
-                <td colspan="4" class="text-right"><b>Tax (15%):</b></td>
-                <td>{{ number_format($transaction['tax']) }}</td>
+                <td><strong>EMAIL:</strong></td>
+                <td>{{ $guest['email'] }}</td>
+                <td><strong>STATUS:</strong></td>
+                <td>Lunas</td>
             </tr>
             <tr>
-                <td colspan="4" class="text-right"><b>Total:</b></td>
-                <td><b>{{ number_format($transaction['total']) }}</b></td>
+                <td><strong>TELP:</strong></td>
+                <td>{{ $guest['phone_number'] }}</td>
+                <td><strong>LEMBAR KE:</strong></td>
+                <td>{{ $transaction['transaction_id'] }}</td>
             </tr>
-        </tfoot>
-    </table>
-</section>
+        </table>
+    </div>
 
-
+    <div class="form-container">
+        <table class="receipt-table">
+            <!-- TRANSAKSI -->
+            <tr>
+                <td class="section-header" colspan="4">TRANSAKSI</td>
+            </tr>
+            <tr>
+                <td width="40%">TANGGAL</td>
+                <td width="60%">: {{ $bookings->check_out_date }}</td>
+            </tr>
+            <tr>
+                <td>KAMAR</td>
+                <td>: {{ $bookings->rooms->room_number }}</td>
+            </tr>
+            
+            <!-- CAFETARIA -->
+            <tr>
+                <td class="section-header" colspan="4">ITEM TAMBAHAN</td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <table class="inner-table">
+                        <tr>
+                            <th width="40%">Item</th>
+                            <th width="20%">Qty</th>
+                            <th width="20%">Price</th>
+                            <th width="20%">Total</th>
+                        </tr>
+                        @forelse ($transaction['additional_charges'] as $charge)
+                        <tr>
+                            <td>{{ $charge['item'] }}</td>
+                            <td class="text-center">{{ $charge['quantity'] }}</td>
+                            <td class="text-right">{{ number_format($charge['price']) }}</td>
+                            <td class="text-right">{{ number_format($charge['total']) }}</td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="4" class="text-center"></td>
+                        </tr>
+                        @endforelse
+                    </table>
+                </td>
+            </tr>
+            
+            <!-- BINTITI LAUNDRY -->
+            <tr>
+                <td class="section-header" colspan="4">BINTITI LAUNDRY</td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <table class="inner-table">
+                        <tr>
+                            <th width="40%">Item</th>
+                            <th width="20%">Qty</th>
+                            <th width="20%">Price</th>
+                            <th width="20%">Total</th>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-center"></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            
+            <!-- PERMANENT/TEAM -->
+            <tr>
+                <td class="section-header" colspan="4">PERINCIAN/ITEM</td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <table class="inner-table">
+                        <tr>
+                            <th width="40%">Item</th>
+                            <th width="20%">Qty</th>
+                            <th width="20%">Price</th>
+                            <th width="20%">Total</th>
+                        </tr>
+                        <tr>
+                            <td>Room {{ $transaction['room_number'] }} - {{ $transaction['nights'] }} night(s)</td>
+                            <td class="text-center">{{ $transaction['nights'] }}</td>
+                            <td class="text-right">{{ number_format($transaction['room_rate']) }}</td>
+                            <td class="text-right">{{ number_format($transaction['room_total']) }}</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            
+            <!-- LAIN-LAIN -->
+            <tr>
+                <td class="section-header" colspan="4">LAIN-LAIN</td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <table class="inner-table">
+                        <tr>
+                            <th width="40%">Item</th>
+                            <th width="20%">Qty</th>
+                            <th width="20%">Price</th>
+                            <th width="20%">Total</th>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-center"></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            
+            <!-- JUMLAH AMOUNT -->
+            <tr>
+                <td class="jumlah-amount-header" style="font-size :11pt" colspan="4">JUMLAH AMOUNT</td>
+            </tr>
+            <tr>
+                <td colspan="2">Subtotal:</td>
+                <td colspan="2" class="text-right">{{ number_format($transaction['subtotal']) }}</td>
+            </tr>
+            <tr>
+                <td colspan="2">Tax ({{ $tax_rate * 100 }}%):</td>
+                <td colspan="2" class="text-right">{{ number_format($transaction['tax']) }}</td>
+            </tr>
+            <tr>
+                <td colspan="2"><strong>TOTAL:</strong></td>
+                <td colspan="2" class="total-amount text-right" style="font-size: 12pt">{{ number_format($transaction['total']) }}</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div class="signatures">
+        <table class="sign-table">
+            <tr>
+                <td width="40%">
+                    <p>TANDA TANGAN PENJAMIN / APPROVAL</p>
+                    <div class="signature-line"></div>
+                </td>
+                <td width="20%"></td>
+                <td width="40%">
+                    <p>TANDA TANGAN GUEST / SIGNATURE</p>
+                    <div class="signature-line"></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <div class="invoice-footer">
+        <span class="invoice-id">{{ $transaction['transaction_id'] }}</span>
+    </div>
+</div>
 
 <style>
-    h1 {
-        font-size: 2.5rem;
-        margin-bottom: 20px;
+    @page {
+        size: landscape;
+        margin: 5mm;
     }
-    h5 {
-        font-size: 1.25rem;
-        margin-bottom: 10px;
+    
+    body {
+        margin: 0;
+        padding: 0;
+        font-size: 9pt;
+        font-family: Arial, sans-serif;
     }
-    .table {
-        border-collapse: collapse;
+    
+    .container-landscape {
+        width: 90%;
+        max-width: 297mm; /* A4 landscape width */
+        height: 210mm; /* A4 landscape height */
+        margin: 0 auto;
+        padding: 5mm;
+        box-sizing: border-box;
+    }
+    
+    .header-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 3mm;
+    }
+    
+    .logo-container {
+        width: 15mm;
+        margin-right: 3mm;
+    }
+    
+    .logo {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    .hotel-info {
+        text-align: center;
+        flex-grow: 1;
+    }
+    
+    .hotel-info h2 {
+        margin: 0 0 2mm;
+        font-size: 12pt;
+    }
+    
+    .hotel-info p {
+        margin: 0;
+        font-size: 8pt;
+    }
+    
+    .customer-details {
+        margin-bottom: 3mm;
+    }
+    
+    .info-table {
         width: 100%;
+        border-collapse: collapse;
+        font-size: 8pt;
     }
-    .table th, .table td {
-        border: 1px solid #000;
-        padding: 8px;
-        text-align: left;
+    
+    .info-table td {
+        padding: 1mm 1mm;
+        border: 0.5pt solid #000;
     }
-    .table th {
+    
+    .form-container {
+        margin-bottom: 3mm;
+    }
+    
+    .receipt-table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 0.5pt solid #000;
+    }
+    
+    .receipt-table td {
+        border: 0.5pt solid #000;
+        padding: 1mm 1mm;
+        font-size: 8pt;
+    }
+    
+    .inner-table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 0.5pt solid #000;
+    }
+    
+    .inner-table th, .inner-table td {
+        padding: 1mm;
+        font-size: 8pt;
+        border: 0.5pt solid #000;
+        border-bottom: 0.5pt solid #ddd;
+    }
+    
+    .section-header {
+        font-weight: bold;
         background-color: #f2f2f2;
+        text-align: center;
+        font-size: 9pt;
     }
-    .text-right {
-        text-align: right;
+    
+    .jumlah-amount-header {
+        font-weight: bold;
+        background-color: #f2f2f2;
+        text-align: center;
+        font-size: 11pt;
+        color: #000;
     }
+    
+    .total-amount {
+        font-weight: bold;
+        font-size: 10pt;
+    }
+    
+    .mini-row {
+        height: 3mm;
+    }
+    
     .text-center {
         text-align: center;
     }
+    
+    .text-right {
+        text-align: right;
+    }
+    
+    .signatures {
+        margin-top: 3mm;
+    }
+    
+    .sign-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .sign-table td {
+        vertical-align: bottom;
+        padding: 1mm;
+        font-size: 7pt;
+    }
+    
+    .signature-line {
+        border-top: 0.5pt solid #000;
+        margin-top: 5mm;
+    }
+    
+    .invoice-footer {
+        margin-top: 2mm;
+        text-align: right;
+    }
+    
+    .invoice-id {
+        font-size: 9pt;
+        color: blue;
+    }
+    
+    @media print {
+        .container-landscape {
+            width: 100%;
+            max-width: none;
+            height: auto;
+        }
+    }
 </style>
-
-</div>
-
-
-</body>
-</html>

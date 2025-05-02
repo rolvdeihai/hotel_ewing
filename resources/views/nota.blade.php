@@ -17,12 +17,12 @@ $room_rate = $bookings->room_rate;
 
 $check_in = Carbon::parse($bookings->check_in_date);
 $check_out = Carbon::parse($bookings->check_out_date);
-$nights = $check_in->diffInDays($check_out);
-if ($nights < 1){
-    $nights = 1;
-}
+$hours = $check_in->diffInHours($check_out);
+// if ($nights < 1){
+//     $nights = 1;
+// }
 
-$room_total = $room_rate * $nights;
+$room_total = $room_rate * ceil($hours/24);
 $tax_rate = $saldo->tax_rate;
 $tax = $bookings->total_amount * $tax_rate;
 $total = $bookings->total_amount + $tax;

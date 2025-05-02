@@ -111,14 +111,34 @@ class BookingsController extends Controller
             $booking->total_amount = $request->total_amount;
         }
 
-        // **7. Update XItems If Provided**
+        // // **7. Update XItems If Provided**
+        // if ($request->filled('xitem_id')) {
+        //     foreach ($request->xitem_id as $index => $xitemId) {
+        //         $xitem = XItems::where('booking_id' === $booking->id);
+        //         if ($xitem) {
+        //             $xitem->pricelist_id = $request->item_id[$index];
+        //             $xitem->qty = $request->quantity[$index];
+        //             $booking->total_amount += $xitem->qty * $xitem->pricelists->price;
+        //             $xitem->save();
+        //         }
+        //     }
+        // }
+
         if ($request->filled('xitem_id')) {
             foreach ($request->xitem_id as $index => $xitemId) {
-                $xitem = XItems::find($xitemId);
+                // Ambil item berdasarkan ID
+                $xitem = XItems::where('booking_id', $booking->id)->where('id', $xitemId)->first();
+
                 if ($xitem) {
+                    // Update data
                     $xitem->pricelist_id = $request->item_id[$index];
                     $xitem->qty = $request->quantity[$index];
-                    $booking->total_amount += $xitem->qty * $xitem->pricelists->price;
+
+                    // Pastikan relasi 'pricelists' sudah dimuat sebelum mengakses harga
+                    if ($xitem->pricelists) {
+                        $booking->total_amount += $xitem->qty * $xitem->pricelists->price;
+                    }
+
                     $xitem->save();
                 }
             }
@@ -193,6 +213,9 @@ class BookingsController extends Controller
                     // Jika sudah ada, tambahkan quantity
                     $existingXItem->qty += $request->quantity;
                     $existingXItem->save();
+
+                    $pricelist->stocks -= $request->quantity;
+                    $pricelist->save();
                 } else {
                     // Jika belum ada, buat entri baru
                     XItems::create([
@@ -200,6 +223,9 @@ class BookingsController extends Controller
                         'pricelist_id' => $request->pricelist_id,
                         'qty' => $request->quantity,
                     ]);
+
+                    $pricelist->stocks -= $request->quantity;
+                    $pricelist->save();
                 }
 
                 // Update total_amount di booking

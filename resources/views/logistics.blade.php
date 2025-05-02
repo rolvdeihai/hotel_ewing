@@ -31,9 +31,7 @@
                     </i>
 
                 </button>
-                <button class="btn btn-danger">
-                    <i class="bi bi-arrow-clockwise me-2"></i>Delete Item
-                </button>
+                
                 
             </div>
         </div>
@@ -131,7 +129,7 @@
                                 <form action="/delete_logistic" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <input type="hidden" name="item_id" value="{{ $item->id }}">
-                                    <button class="btn btn-sm btn-danger" style="margin-bottom: 5px" type="submit">Delete</button>
+                                    <button class="btn btn-sm btn-danger" style="margin-bottom: 5px" type="submit" onclick="return confirm('Apakah anda yakin untuk menghapus item ini?')">Delete</button>
                                 </form>
                             </td>
                         </tr>

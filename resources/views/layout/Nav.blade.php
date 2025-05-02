@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,179 +10,288 @@
     <style>
         body {
             background-color: #f8f9fa;
-            margin: 0; /* Remove default margin */
+            margin: 0;
             font-family: Arial, sans-serif;
+            padding-top: 50px; /* Add padding to account for fixed top navbar */
         }
 
-        .navbar {
-            background-color: #343a40;
-            position: fixed; /* Fixed position */
-            z-index: 1000; /* High z-index to ensure it stays on top */
-            width: 12%; /* Width of the navbar as a percentage */
-            top: 50px; /* Start below the navbar-top */
-            height: calc(100% - 50px); /* Full height minus the navbar-top height */
-            align-items : flex-start;
-        }
-
-        .navbar-nav {
-            display: flex; /* Use flexbox for layout */
-            flex-direction: column; /* Stack items vertically */
-            padding: 0; /* Remove any default padding */
-            margin-top: 0; /* Ensure no margin at the top */
-        }
-
-        .nav-item {
-            margin-bottom: 5%; /* Space between nav items as a percentage */
-            margin-top: 5%;
-            position: relative;
-            display: flex;
-        }
-
-        .nav-link {
-            display: block;
-            width: 100%;
-            padding: 5%; /* Add padding around the link text as a percentage */
-            color: #ffffff; /* Text color */
-            text-decoration: none; /* Remove underline */
-        }
-
-        .nav-link:hover {
-            color: #adb5bd; /* Hover color */
-        }
-
+        /* Top Navbar */
         .navbar-top {
-            background-color: #343a40; /* Same color as the original navbar */
-            position: fixed; /* Fixed position */
-            z-index: 1000; /* High z-index to ensure it stays on top */
+            background-color: #343a40;
+            position: fixed;
+            z-index: 1030;
             top: 0;
             width: 100%;
-            height: 50px; /* Height of the navbar-top */
-            padding-left: 15%; /* Padding to account for the navbar width */
+            height: 50px;
         }
 
-        .navbar-top .navbar-brand,
-        .navbar-top .nav-link {
-            color: #ffffff; /* Text color */
+        /* Side Navbar - Desktop */
+        .side-navbar {
+            background-color: #343a40;
+            position: fixed;
+            z-index: 1020;
+            width: 12%;
+            top: 50px;
+            height: calc(100% - 50px);
+            padding-top: 15px;
+            transition: all 0.3s ease;
         }
 
-        .navbar-top .nav-link:hover {
-            color: #adb5bd; /* Hover color */
-        }
-
-        .navbar-top-content {
-           height : 50px;
-        }
-        .container {
-            margin-top: 1%;
-            margin-left: 15%; /* Space for the navbar */
-            padding: 1%; /* Padding as a percentage */
-            display : inline-block;
-        }
-
-        .card {
-            margin-bottom: 2%; /* Margin as a percentage */
+        .side-navbar .navbar-nav {
             display: flex;
+            flex-direction: column;
+            padding: 0;
+            width: 100%;
+        }
+
+        .side-navbar .nav-item {
+            margin-bottom: 5%;
+            margin-top: 5%;
+            width: 100%;
+        }
+
+        .side-navbar .nav-link {
+            display: block;
+            width: 100%;
+            padding: 8px 15px;
+            color: #ffffff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .side-navbar .nav-link:hover {
+            color: #adb5bd;
+        }
+
+        /* Main Container */
+        .main-container {
+            margin-left: 12%;
+            padding: 20px;
+            transition: margin 0.3s ease;
+        }
+
+        /* Card and other UI elements */
+        .card {
+            margin-bottom: 20px;
         }
 
         .title-box {
             background-color: #495057;
             color: #ffffff;
             text-align: center;
-            margin-bottom: 2%; /* Margin as a percentage */
-            display: flex;
-            position: relative;
-        }
-        .navbar .container, .navbar .container-fluid, .navbar .container-lg,
-        .navbar .container-md, .navbar .container-sm, .navbar .container-xl{
-            align-items : flex-start;
-        }
-        .nav-link{
-            display: flex;
-            padding-bottom : 10px;
-            transition: color 0.3s ease;
+            margin-bottom: 20px;
+            padding: 10px;
         }
 
-        .nav-link :hover{
-            color: rgba(114, 113, 113, 0.7);
+        /* Responsive styles */
+        @media (max-width: 1000px) {
+            body {
+                padding-top: 0; /* Remove padding as navbar is no longer fixed on mobile */
+            }
+
+            .navbar-top {
+                position: relative;
+                height: auto;
+            }
+
+            .side-navbar {
+                width: 100%;
+                position: relative;
+                top: 0;
+                height: auto;
+                display: none; /* Hide by default on mobile */
+            }
+
+            .side-navbar.show {
+                display: block; /* Show when toggled */
+            }
+
+            .main-container {
+                margin-left: 0;
+                padding: 15px;
+            }
+
+            /* Mobile-friendly table styles */
+            .table-responsive {
+                overflow-x: auto;
+            }
+
+            .table {
+                width: 100%;
+                white-space: nowrap;
+            }
+
+            .table th, .table td {
+                padding: 5px;
+                font-size: 0.8rem;
+            }
+
+            .btn {
+                font-size: 0.8rem;
+                padding: 5px 10px;
+            }
+            .navbar-top .nav-link {
+        margin: 10px 0; /* Add more margin */
+        padding: 10px 15px; /* Ensure padding is the same as side navbar items */
+        display: block; /* Make sure each link takes up the full width */
+        width: 100%; /* Ensure full width */
+        text-align: left; /* Center text */
+    }
+
+    .navbar-top .nav-item {
+        width: 100%; /* Ensure each item takes up the full width */
+    }
+
+    /* Ensure the form for logout also has the same styling */
+    .navbar-top form {
+        margin: 10px 0; /* Add more margin */
+        padding: 0; /* Remove padding from form */
+        width: 100%; /* Ensure full width */
+    }
+
+    .navbar-top form .nav-link {
+        display: block; /* Make sure the link takes up the full width */
+        width: 100%; /* Ensure full width */
+        text-align: left; /* Center text */
+    }
+    /* Adjust side navbar items */
+    .side-navbar .nav-item {
+        margin-bottom: 2%; /* Reduce margin between side navbar items */
+        margin-top: 2%; /* Reduce margin between side navbar items */
+    }
+
+    .side-navbar .nav-link {
+        padding: 10px 15px; /* Adjust padding for side navbar items */
+        font-size: 1rem; /* Ensure font size is consistent */
+    }
         }
+
+     
     </style>
-
-    </head>
-
-     <!-- New Horizontal Navbar at the Top -->
-     <nav class="navbar navbar-expand-lg navbar-dark navbar-top">
+</head>
+<body>
+    <!-- Top Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Hotel Management System</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTop" aria-controls="navbarTop" aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-hotel brand-logo"></i>
+                Hotel Management System
+            </a>
+            <button class="navbar-toggler" type="button" id="topNavToggle">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
-         </div>
-            <div class="navbar-top-content" id="navbarTop">
+            
+            <div class="collapse navbar-collapse" id="navbarTop">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/profile">Profile</a>
+                        <a class="nav-link" href="/profile"><i class="fas fa-user mr-1"></i> Profil</a>
                     </li>
                     <li class="nav-item">
                         @guest
-                            <a class="nav-link" href="/signin">Sign In</a>
+                            <a class="nav-link" href="/signin"><i class="fas fa-sign-in-alt mr-1"></i> Masuk</a>
                         @else
                             <form action="/logout" method="POST">
                                 @csrf
-                                <button type="submit" class="nav-link btn btn-link" style="border: none; background: none; padding: 0;">
-                                    Sign Out
-                                </button>
+                                <a class="nav-link" type="submit" onclick="return confirm('Apakah anda yakin untuk log out?')">
+                                    <i class="fas fa-sign-out-alt mr-1"></i> Keluar
+                                </a>
                             </form>
                         @endguest
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/account-maintenance">Account</a>
+                        <a class="nav-link" href="/account-maintenance"><i class="fas fa-user-cog mr-1"></i> Akun</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="navbar-hor">
-            <ul class="navbar-nav flex-column">
-                <li class="nav-item-home">
-                    <h5 class="nav-link"><a href="/">HOME</a></h5>
+    <!-- Side Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark side-navbar" id="sideNavbar">
+        <div class="container-fluid p-0">
+            <ul class="navbar-nav flex-column w-100">
+                <li class="nav-item">
+                    <a class="nav-link" href="/rooms"><i class="fas fa-bed mr-2"></i>Kamar</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/rooms">Rooms</a>
+                    <a class="nav-link" href="/price_list"><i class="fas fa-tags mr-2"></i>List Harga</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/price_list">Price List</a>
+                    <a class="nav-link" href="/viewItems"><i class="fas fa-boxes mr-2"></i>Logistik</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/viewItems">Logistics</a>
+                    <a class="nav-link" href="/transactions"><i class="fas fa-exchange-alt mr-2"></i>Transaksi</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/transactions">Transactions</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/viewKas">Kas</a>
+                    <a class="nav-link" href="/viewKas"><i class="fas fa-money-bill-wave mr-2"></i>Kas</a>
                 </li>
             </ul>
         </div>
     </nav>
 
-<!-- Main Content -->
-<div class="container mt-4" style="margin-left: 270px;">
-    <!-- Content will be loaded from separate files -->
-</div>
+    <!-- Main Content -->
+    <div class="main-container" id="mainContainer">
+        <!-- Content will be loaded here -->
+        @yield('content')
+    </div>
 
-<!-- Bootstrap JS and dependencies -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-<div class="container">
-    @yield('content')
-</div>
-
-
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Elements
+        const topNavToggle = document.getElementById('topNavToggle');
+        const navbarTop = document.getElementById('navbarTop');
+        const sideNavbar = document.getElementById('sideNavbar');
+        const mainContainer = document.getElementById('mainContainer');
+        
+        // Function to check if we're on mobile view
+        function isMobileView() {
+            return window.innerWidth <= 1000;
+        }
+        
+        // Function to adjust layout based on viewport size
+        function adjustLayout() {
+            if (isMobileView()) {
+                // Mobile view layout adjustments
+                mainContainer.style.marginLeft = '0';
+                // Only hide the side navbar if it's not toggled to show
+                if (!sideNavbar.classList.contains('show')) {
+                    sideNavbar.style.display = 'none';
+                }
+                // Add body padding only for desktop
+                document.body.style.paddingTop = '0';
+            } else {
+                // Desktop view layout adjustments
+                mainContainer.style.marginLeft = '12%';
+                sideNavbar.style.display = 'block';
+                document.body.style.paddingTop = '50px';
+            }
+        }
+        
+        // Toggle navigation on mobile
+        topNavToggle.addEventListener('click', function() {
+            navbarTop.classList.toggle('show');
+            
+            // In mobile view, also toggle the side navbar
+            if (isMobileView()) {
+                sideNavbar.classList.toggle('show');
+                sideNavbar.style.display = sideNavbar.classList.contains('show') ? 'block' : 'none';
+            }
+        });
+        
+        // Adjust layout when window is resized
+        window.addEventListener('resize', adjustLayout);
+        
+        // Initialize layout based on current viewport
+        adjustLayout();
+        
+        // Additional listener for orientation changes (important for mobile devices)
+        window.addEventListener('orientationchange', adjustLayout);
+    });
+    </script>
 </body>
 </html>

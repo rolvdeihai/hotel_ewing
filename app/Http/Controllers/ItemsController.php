@@ -63,7 +63,7 @@ class ItemsController extends Controller
         $logistics = Items::find($request->item_id);
 
         $update_logistics = $request->validate([
-            'name' => 'required|max:25|regex:/^[\w\s-]*$/|unique:items,name', // Allows letters, numbers, spaces, hyphens
+            'name' => 'required|max:25|regex:/^[\w\s-]*$/|unique:items,name,' . $logistics->id, // Allows letters, numbers, spaces, hyphens
             'description' => 'required|max:255', // Expanded max length, removed invalid regex
             'price' => 'required|numeric|min:0', // Should be a number, not email validation
             'stocks' => 'required|integer|min:0', // Should be an integer, not `exists`
@@ -112,7 +112,7 @@ class ItemsController extends Controller
         $pricelist = Pricelist::find($request->item_id);
 
         $update_pricelist = $request->validate([
-            'name' => 'required|max:25|regex:/^[\w\s-]*$/|unique:pricelists,name', // Allows letters, numbers, spaces, hyphens
+            'name' => 'required|max:25|regex:/^[\w\s-]*$/|unique:pricelists,name,' . $pricelist->id, // Allows letters, numbers, spaces, hyphens
             'description' => 'required|max:255', // Expanded max length, removed invalid regex
             'price' => 'required|numeric|min:0', // Should be a number, not email validation
             'stocks' => 'required|integer|min:0', // Should be an integer, not `exists`

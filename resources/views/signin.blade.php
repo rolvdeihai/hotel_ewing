@@ -79,7 +79,7 @@
         </div>
     @endif
 
-    <img src="/storage/image/hotel_header.jpg" alt="Hotel Dwipas">
+    <img src="/storage/image/hotel-welcome.jpg" alt="Hotel Dwipas">
     <div class="signin-container">
         <p class="title">JayJo Management System</p>
         <div class="signin-form">

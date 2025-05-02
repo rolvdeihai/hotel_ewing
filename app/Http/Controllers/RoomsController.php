@@ -20,7 +20,7 @@ class RoomsController extends Controller
      */
     public function index()
     {
-        $rooms = Rooms::simplePaginate(8);
+        $rooms = Rooms::simplePaginate(9);
 
         return view('rooms', [
             "rooms" => $rooms,
@@ -41,11 +41,8 @@ class RoomsController extends Controller
         $saldo = Saldo::find(1);
 
         $update_saldo = $request->validate([
-            'room_rate' => 'required|numeric|min:0', // Bisa menerima angka desimal
             'tax' => 'required|numeric|min:0', // Jika tax harus bisa desimal, gunakan decimal:1,2
         ]);
-
-        $saldo->room_rate = $update_saldo['room_rate'];
         $saldo->tax = $update_saldo['tax'] / 100;
 
         // Insert into database
@@ -271,7 +268,7 @@ class RoomsController extends Controller
         $totalRevenue = Bookings::whereDate('check_out_date', $date)
             ->sum('total_amount'); // Assuming 'amount' is the field that holds the revenue
 
-        
+
         $recentCheckOuts = Bookings::where('status', 'checkout')
         ->orderBy('check_out_date', 'desc') // Assuming 'check_out_date' is the field for check-out date
         ->take(5) // Get the last 5 check-outs
@@ -281,7 +278,7 @@ class RoomsController extends Controller
         ->orderBy('check_in_date', 'desc') // Assuming 'check_out_date' is the field for check-out date
         ->take(5) // Get the last 5 check-outs
         ->get();
-        
+
 
         return view('ahotel', [
             'availableRooms' => $availableRoomsCount,

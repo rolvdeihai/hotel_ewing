@@ -61,7 +61,7 @@ class KasController extends Controller
         $newKas = $request->validate([
             'description' => 'nullable|string', // Allows null and must be a string
             'qty' => 'nullable|integer|min:0', // Must be an integer, can be null
-            'transaction' => 'nullable|integer|min:0', // Must be an integer, can be null
+            'transaction' => 'nullable|integer', // Must be an integer, can be null
         ]);
 
         $saldo = Saldo::find(1);

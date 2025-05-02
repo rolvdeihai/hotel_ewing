@@ -17,17 +17,16 @@ class TransactionsController extends Controller
      */
     public function index()
     {
-        $bookings = Bookings::where('status', 'checkOut')->get();
-        $query = Bookings::query();
+        $bookings = Bookings::where('status', 'checkOut');
         // Retrieves multiple records
 
         // Extract all booking IDs
         $bookingIds = $bookings->pluck('id')->toArray();
         $grandTotal = 0;
 
-        $grandTotal = $query->sum('total_amount') ?? 0;
+        $grandTotal = $bookings->sum('total_amount') ?? 0;
 
-        $bookings = $query->orderBy('check_in_date', 'desc')->paginate(10);
+        $bookings = $bookings->orderBy('check_in_date', 'desc')->paginate(10);
 
 
         // Fetch XItems that match any booking_id in the retrieved bookings
@@ -41,7 +40,7 @@ class TransactionsController extends Controller
     }
 
     public function viewSlideTransactions(Request $request){
-        $query = Bookings::query();
+        $query = Bookings::where('status', 'checkOut');
         $xitems = XItems::all();
 
         // Default grand total to 0

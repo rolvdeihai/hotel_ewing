@@ -2,8 +2,8 @@
 
 @section('content')
     <section class="container-fluid py-4">
+        <h2>Transactions</h2>
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Transactions</h2>
             <div>
                 <form id="combinedForm" class="d-flex" action="/viewSlideTransactions" method="get">
                     @csrf
@@ -95,8 +95,8 @@
                                 @endif
                                 <form action="/deletetransaction" method="POST" enctype="multipart/form-data">
                                     @csrf
-                                    <input type="hidden" name="booking_id" value="{{ $booking['id'] }}">
-                                    <button class="btn btn-danger btn-sm" style="margin-bottom: 5px" type="submit"><i class="bi bi-trash"></i>Delete</button>
+                                    <input type="hidden" name="booking_id" value="{{ $booking['id'] }}" >
+                                    <button class="btn btn-danger btn-sm" style="margin-bottom: 5px" type="submit" onclick="return confirm('Apakah anda yakin untuk menghapus transaksi ini?')"><i class="bi bi-trash"></i>Delete</button>
                                 </form>
                             </td>
                         </tr>

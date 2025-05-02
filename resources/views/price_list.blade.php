@@ -8,10 +8,6 @@
                 <button class="btn btn-success me-2">
                     <i class="bi bi-plus-circle me-2"><a href="/additemsell" style="color: white; font-style: normal;">Add Item</a>
                     </i>
-
-                </button>
-                <button class="btn btn-danger">
-                    <i class="bi bi-arrow-clockwise me-2"></i>Delete Item
                 </button>
             </div>
         </div>

@@ -24,7 +24,7 @@
                             <form action="/checkout" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <input type="hidden" name="room_id" value="{{$r->room_number}}">
-                                <button class="btn btn-primary" style="margin-bottom: 5px" type="submit">Checkout</button>
+                                <button class="btn btn-primary" style="margin-bottom: 5px" type="submit" onclick="return confirm('Apakah anda yakin anda mau CheckOut Room ini?')">Checkout</button>
                             </form>
                             {{-- <a href="/additionalitem" class="btn btn-secondary">additional Item</a> --}}
                             <form action="/additionalitem" method="post" enctype="multipart/form-data">
@@ -65,5 +65,9 @@
             </div>
         </div> --}}
     </div>
+
+    <div class="d-flex justify-content-center mt-3">
+        {{ $rooms->appends(request()->query())->links() }}
+    </div>
 </section>
 @endsection

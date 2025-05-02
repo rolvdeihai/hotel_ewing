@@ -43,7 +43,7 @@
                         <label for="password" class="form-label">Confirm Password</label>
                         <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Leave blank to keep current password">
                     </div>
-                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                    <button type="submit" class="btn btn-primary" onclick="return confirm('Apakah anda yakin untuk mengubah profile ini?')">Update Profile</button>
                 </form>
             </div>
         </div>

@@ -94,7 +94,7 @@
                     <input type="number" class="form-control" name="quantity[]" value="{{ $xitem->qty }}" required>
                 </div>
             @endforeach
-            <button type="submit" class="btn btn-success">
+            <button type="submit" class="btn btn-success"onclick="return confirm('Apakah anda yakin untuk mengupdate transaksi booking ini?')">
                 <i class="bi bi-save me-2"></i>Save Changes
             </button>
         </form>

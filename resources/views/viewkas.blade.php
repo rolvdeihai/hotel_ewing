@@ -61,12 +61,12 @@
                                 <form action="/delete_kas" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <input type="hidden" name="transaction_id" value="{{ $transaction->id }}">
-                                    <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to cancel this transaction?')" style="margin-bottom: 5px" type="submit">Delete</button>
+                                    <button class="btn btn-sm btn-danger" onclick="return confirm('Apakah anda yakin untuk menghapus transaksi ini?')" style="margin-bottom: 5px" type="submit">Delete</button>
                                 </form>
                                 <form action="/cancel_kas" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <input type="hidden" name="transaction_id" value="{{ $transaction->id }}">
-                                    <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('Are you sure you want to cancel this transaction?')">
+                                    <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('Apakah anda yakin untuk cancel transaksi ini?')">
                                         <i class="bi bi-trash"></i> Cancel
                                     </button>
                                 </form>
